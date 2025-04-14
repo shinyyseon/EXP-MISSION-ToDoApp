@@ -1,8 +1,11 @@
+import './currentTask.js';
+import './subTask.js';
+
 // 하위태스크 접기/펼치기 토글
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("toggleSubtask")) {
     const toggleBtn = e.target;
-    const wrapper = toggleBtn.closest(".taskCard");
+    const wrapper = toggleBtn.closest(".currentTaskWrapper");
     const subtaskContainer = wrapper.querySelector(".subtaskContainer");
 
     if (!subtaskContainer) return;
@@ -44,4 +47,3 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.toggle("dark-mode", toggleCheckbox.checked);
   });
 });
-
