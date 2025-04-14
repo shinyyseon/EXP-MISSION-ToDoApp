@@ -77,6 +77,7 @@ const moveCheckEvent = (backLogContainer, items) => {
       // 버튼 클릭 시 moveCheck = true로 변경
       items.moveCheck = true;
       console.log("moveCheck:", items);
+      addLocalStorage();
     });
 
     // 이동 버튼을 backLogContainer에 추가함
@@ -243,7 +244,6 @@ const newElement = (items) => {
   eventListener.blurContent(backLogTaskContent);
   eventListener.clickEdit(editBtn, backLogTaskContent, finishDateContent);
   eventListener.clickDelete(deleteBtn, backLogContainer, items);
-  // eventListener.clickImportant(selected, dropdownOptions);
   eventListener.changeImportant(dropdownOptions, label, selectedCircle, items);
 
   moveCheckEvent(backLogContainer, items);
@@ -299,14 +299,6 @@ const eventListener = {
       addLocalStorage();
     });
   },
-  // 중요도 클릭 시
-  clickImportant: (selectedElement, dropDownElement) => {
-    selectedElement.addEventListener("click", () => {
-      // display에 따른 3항 연산자
-      dropDownElement.style.display =
-        dropDownElement.style.display === "none" ? "block" : "none";
-    });
-  },
   // 중요도 변경 시
   changeImportant: (dropDownElement, label, selectedCircle, items) => {
     // dropDownElement ( ul ) 안에 있는 li 를 가져온다
@@ -316,10 +308,6 @@ const eventListener = {
         // li 가 리스트 형식으로 들어오기 때문에 index 0-2 존재
         // 0 - 상, 1 - 중, 2 - 하
         items.importance = index + 1;
-        // dropDownElement.style.display = "none"; // 클릭 시 드롭다운 메뉴 닫기
-        // selectedCircle.classList.remove("low");
-        // selectedCircle.classList.remove("medium");
-        // selectedCircle.classList.remove("high");
         // 중요도 1, 2, 3 에 대해 그때에 해당하는 스타일을 보여주는 삼항 연산자
         items.importance === 1
           ? (label.innerText = "상")
