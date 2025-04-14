@@ -71,7 +71,7 @@ const moveCheckEvent = (backLogContainer, items) => {
     // 우선 "이동" 버튼으로 생성
     const moveBtn = document.createElement("button");
     moveBtn.classList.add("move-btn");
-    moveBtn.innerText = "이동";
+    moveBtn.innerText = ">>>";
 
     moveBtn.addEventListener("click", () => {
       // 버튼 클릭 시 moveCheck = true로 변경
