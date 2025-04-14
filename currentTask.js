@@ -1,5 +1,5 @@
 const checkList = document.querySelector(".currentTaskWrapper");
-let todos = [
+let data = [
 {
       id: 1,
       title: "첫 번째 항목",
@@ -17,7 +17,7 @@ let todos = [
       title: "두 번째 항목",
       importance: 1,
       moveCheck: true,
-      complete: true,
+      complete: false,
       date: "2025-04-08",
       list: [
         { id: 201, text: "할 일 A", check: true },
@@ -32,16 +32,17 @@ let todos = [
       complete: false,
       date: "2025-04-09",
       list: [
-        { id: 201, text: "할 일 A", check: true },
-        { id: 202, text: "할 일 B", check: false },
+        { id: 201, text: "할 일 C", check: true },
+        { id: 202, text: "할 일 D", check: false },
       ],
     },
 ];
 
 // 본문 렌더링
 const checkListBody = () => {
-  todos.filter(todo => todo.moveCheck && !todo.complete)
-       .forEach(todo => checkList.prepend(addCheckListBodyElement(todo)));
+  data.filter(todo => todo.moveCheck && !todo.complete)
+  //append로 원래 데이터 id로 랜더링
+    .forEach(todo => checkList.append(addCheckListBodyElement(todo)));
 };
 
 // El 생성
@@ -54,9 +55,10 @@ const addEl = (tag, className = "", text = "") => {
 
 // body 요소 그리기
 const addCheckListBodyElement = (todo) => {
-
+  const taskCard = addEl("div", "taskCard");
   const container = addEl("div", "currentTaskContainer");
   const mainTask = addEl("div", "mainTaskEx");
+  taskCard.dataset.id = todo.id; //동적으로 data-id 불러오기
 
   // 제목과 date 요소 기본 text와 input 두개 생성
   const titleSpan = addEl("span", "mainTaskName", todo.title);
@@ -79,8 +81,14 @@ const addCheckListBodyElement = (todo) => {
   buttons.append(modBtnEl, TaskBtnEl);
 
   container.append(mainTask, buttons);
+
+  const subtaskContainer = addEl("div", "subtaskContainer hidden");
+  const addBtn = addEl("button", "addSubtaskBtn", "+");
+  subtaskContainer.appendChild(addBtn);
+  taskCard.append(container, subtaskContainer);
   addEventListeners({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, TaskBtnEl, todo });
-  return container;
+
+  return taskCard;
 };
 
 // 이벤트 함수
@@ -117,56 +125,3 @@ const addEventListeners = ({ titleSpan, titleInput, dateSpan, dateInput, modBtnE
 };
 
 checkListBody();
-
-// 하위태스크 접기/펼치기 토글
-document.addEventListener("DOMContentLoaded", () => {
-  const toggleBtns = document.querySelectorAll(".toggleSubtask");
-
-  toggleBtns.forEach((toggleBtn) => {
-    toggleBtn.addEventListener("click", () => {
-      const wrapper = toggleBtn.closest(".currentTaskWrapper");
-      const subtaskContainer = wrapper.querySelector(".subtaskContainer");
-
-      subtaskContainer.classList.toggle("hidden");
-
-      toggleBtn.textContent = subtaskContainer.classList.contains("hidden")
-        ? "▼"
-        : "▲";
-
-      // 펼쳐질 경우 자동 스크롤
-      if (!subtaskContainer.classList.contains("hidden")) {
-        subtaskContainer.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest"
-        });
-      }
-    });
-  });
-});
-
-
-// 중요도 선택지
-document.querySelectorAll(".importanceDropdown").forEach((dropdown) => {
-  const selected = dropdown.querySelector(".selected");
-  const options = dropdown.querySelector(".dropdownOptions");
-
-  selected.addEventListener("click", () => {
-    options.classList.toggle("hidden");
-  });
-
-  options.querySelectorAll("li").forEach((option) => {
-    option.addEventListener("click", () => {
-      selected.innerHTML = option.innerHTML;
-      options.classList.add("hidden");
-    });
-  });
-});
-
-// 다크모드
-document.addEventListener("DOMContentLoaded", () => {
-  const toggleCheckbox = document.getElementById("toggle");
-
-  toggleCheckbox.addEventListener("change", () => {
-    document.body.classList.toggle("dark-mode", toggleCheckbox.checked);
-  });
-});
