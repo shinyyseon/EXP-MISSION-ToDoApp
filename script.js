@@ -1,5 +1,21 @@
+import { loadLocalStorage } from './backLog.js';
+import { checkListBody } from './currentTask.js';
+import { displayTodoList } from './backLog.js';
+import './backLog.js';
 import './currentTask.js';
 import './subTask.js';
+
+loadLocalStorage();
+displayTodoList();
+checkListBody();
+
+window.addEventListener("updateChecklist", () => {  
+  checkListBody();
+});
+
+window.addEventListener("updateBacklog", () => {  
+  displayTodoList({ fromLocal: false });
+});
 
 // 하위태스크 접기/펼치기 토글
 document.addEventListener("click", (e) => {
@@ -20,23 +36,6 @@ document.addEventListener("click", (e) => {
       });
     }
   }
-});
-
-// 중요도 선택지 
-document.querySelectorAll(".importanceDropdown").forEach((dropdown) => {
-  const selected = dropdown.querySelector(".selected");
-  const options = dropdown.querySelector(".dropdownOptions");
-
-  selected.addEventListener("click", () => {
-    options.classList.toggle("hidden");
-  });
-
-  options.querySelectorAll("li").forEach((option) => {
-    option.addEventListener("click", () => {
-      selected.innerHTML = option.innerHTML;
-      options.classList.add("hidden");
-    });
-  });
 });
 
 // 다크모드

@@ -1,13 +1,13 @@
-//subTask.js 제일 상단에 추가
-import { items, saveToLocalStorage } from './currentTask.js';
+import { todos, saveToLocalStorage } from './backLog.js';
 
 //하위 태스크 스크립트
 //초기 데이터 렌더링
-const renderInitialSubTasks = () => {
+export const renderInitialSubTasks = () => {
   document.querySelectorAll('.currentTaskWrapper').forEach(wrapper => {
     const container = wrapper.querySelector('.subtaskContainer');
-    const backlogId = parseInt(wrapper.dataset.id, 10);
-    const backlog = items.find(b => b.id === backlogId);
+    const backlogId = wrapper.dataset.id
+    const backlog = todos.find(b => b.id === backlogId);
+    
     if (!backlog) return;
 
     backlog.list.forEach(sub => {
@@ -50,7 +50,7 @@ const createDeleteButton = (backlogId, container, subTask) => {
 
   delBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const backlog = items.find(item => item.id === backlogId);
+    const backlog = todos.find(item => item.id === backlogId);
     backlog.list = backlog.list.filter(item => item.id !== subTask.id);
     container.remove();
     saveToLocalStorage();
@@ -107,7 +107,17 @@ const createEditableSubTaskElement = (backlogId, subTask) => {
     isConfirmed = true;
 
     const value = input.value.trim();
-    if (!value) return;
+    
+    if (!value) {
+      const backlog = todos.find(b => b.id === backlogId);
+      if (backlog) {
+        backlog.list = backlog.list.filter(s => s.id !== subTask.id);
+        saveToLocalStorage();
+      }
+      div.remove();
+      return;
+    }
+
     subTask.text = value;
     saveToLocalStorage();
 
@@ -129,14 +139,16 @@ const createEditableSubTaskElement = (backlogId, subTask) => {
 }
 
 //버튼 이벤트 연결
-const initSubtaskAddButtons = () => {
+export const initSubtaskAddButtons = () => {
+  console.log("현재 todos", todos);
+
   document.querySelectorAll('.currentTaskWrapper').forEach(wrapper => {
     const btn = wrapper.querySelector('.addSubtaskBtn');
     const container = wrapper.querySelector('.subtaskContainer');
-    const backlogId = parseInt(wrapper.dataset.id, 10);
+    const backlogId = wrapper.dataset.id;
 
     btn.addEventListener('click', () => {
-      const backlog = items.find(b => b.id === backlogId);
+      const backlog = todos.find(b => b.id === backlogId);
       if (!backlog) return;
 
       const newId = Date.now();
@@ -151,7 +163,3 @@ const initSubtaskAddButtons = () => {
     });
   });
 }
-
-//실행
-renderInitialSubTasks();
-initSubtaskAddButtons();

@@ -1,64 +1,18 @@
-export let items = [];
-
-export const saveToLocalStorage = () => {
-  localStorage.setItem("todoList", JSON.stringify(items));
-};
-
-export const loadFromLocalStorage = () => {
-  const stored = localStorage.getItem("todoList");
-  if (stored && JSON.parse(stored).length > 0) {
-    items.push(...JSON.parse(stored));
-  } else {
-    items.push(
-      {
-        id: 1,
-        title: "첫 번째 항목",
-        importance: 1,
-        moveCheck: true,
-        complete: false,
-        date: "2025-04-07",
-        list: [
-          { id: 101, text: "할 일 1", check: false },
-          { id: 102, text: "할 일 2", check: true },
-        ],
-      },
-      {
-        id: 2,
-        title: "두 번째 항목",
-        importance: 1,
-        moveCheck: true,
-        complete: false,
-        date: "2025-04-08",
-        list: [
-          { id: 201, text: "할 일 A", check: true },
-          { id: 202, text: "할 일 B", check: false },
-        ],
-      },
-      {
-        id: 3,
-        title: "세 번째 항목",
-        importance: 1,
-        moveCheck: true,
-        complete: false,
-        date: "2025-04-09",
-        list: [
-          { id: 301, text: "할 일 C", check: true },
-          { id: 302, text: "할 일 D", check: false },
-        ],
-      }
-    );
-    saveToLocalStorage();
-  }
-};
+import { todos, saveToLocalStorage } from './backLog.js';
+import { initSubtaskAddButtons } from './subTask.js';
+import { renderInitialSubTasks } from './subTask.js';
 
 const checkList = document.querySelector(".currentScrollArea");
 
 // 본문 렌더링
-const checkListBody = () => {
-  items.filter(todo => todo.moveCheck && !todo.complete)
-  //append로 원래 데이터 id로 랜더링
+export const checkListBody = () => {
+  checkList.innerHTML = "";
+  todos.filter(todo => todo.moveCheck && !todo.complete)
     .forEach(todo => checkList.append(addCheckListBodyElement(todo)));
+    renderInitialSubTasks();
+    initSubtaskAddButtons();
 };
+
 
 // El 생성
 const addEl = (tag, className = "", text = "") => {
@@ -69,7 +23,7 @@ const addEl = (tag, className = "", text = "") => {
 };
 
 // body 요소 그리기
-const addCheckListBodyElement = (todo) => {
+export const addCheckListBodyElement = (todo) => {
   const currentTaskWrapper = addEl("div", "currentTaskWrapper");
   const container = addEl("div", "currentTaskContainer");
   const mainTask = addEl("div", "mainTaskEx");
@@ -135,9 +89,9 @@ const addEventListeners = ({ titleSpan, titleInput, dateSpan, dateInput, modBtnE
       todo.title = titleInput.value;
       todo.date = dateInput.value;
       saveToLocalStorage();
+
+      console.log("edit");
+      window.dispatchEvent(new CustomEvent("updateBacklog"));
     }
   });
 };
-
-loadFromLocalStorage();
-checkListBody();
