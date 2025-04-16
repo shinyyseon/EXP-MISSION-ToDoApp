@@ -349,6 +349,8 @@ const sortTodos = () => {
   todos.sort((a, b) => {
     const dateA = new Date(a.date);
     const dateB = new Date(b.date);
+    console.log(dateA);
+    console.log(dateB);
 
     if (dateA.getTime() === dateB.getTime()) {
       // 날짜가 같으면 importance 값을 비교
@@ -377,7 +379,6 @@ const addLocalStorage = () => {
 // 리로드 했을 시 localStorage에 todoList 가 있다면 불러와서 JSON 형태로 만든 후 todos 에 초기화
 export const loadLocalStorage = () => {
   const data = localStorage.getItem("todoList");
-  console.log(JSON.parse(data));
   if (data) {
     todos = JSON.parse(data);
   }
@@ -386,10 +387,10 @@ export const loadLocalStorage = () => {
 // 처음 로드 되었을 때 localStorage 를 확인 후 있다면 todoList를 생성
 export const displayTodoList = (options = { fromLocal: true }) => {
   if (options.fromLocal) {
-    loadLocalStorage();  // ✅ 수정된 값을 덮어씌우지 않게 조건부로!
+    loadLocalStorage();
   }
 
-  backLogList.innerHTML = "";  // ✅ 이전 요소를 모두 지우고 다시 그림
+  backLogList.innerHTML = "";
 
   todos.forEach((item) => {
     const { backLogContainer } = newElement(item);
