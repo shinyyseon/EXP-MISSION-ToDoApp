@@ -1,32 +1,41 @@
+import { createTask, sortTodos, backLogList } from "./backlogTask.js";
+import { addLocalStorage, todoDelete } from "./script.js";
+import {
+  addTaskBtn,
+  searchBtn,
+  choiceImportance,
+  today,
+} from "./backlogTask.js";
+import { addEl } from "./element.js";
 const initBackLogEvents = ({
-  dateInputElement,
-  taskInputElement,
+  finishDateContent,
+  backLogTaskContent,
   editBtn,
   deleteBtn,
-  dropDownElement,
+  dropdownOptions,
   label,
   items,
 }) => {
   // 날짜를 변경 했을 시
-  dateInputElement.addEventListener("change", (e) => {
+  finishDateContent.addEventListener("change", (e) => {
     items.date = e.target.value;
     sortTodos();
     addLocalStorage();
   });
   // 제목을 입력 시
-  taskInputElement.addEventListener("input", (e) => {
+  backLogTaskContent.addEventListener("input", (e) => {
     items.title = e.target.value;
     addLocalStorage();
   });
   // input Element에서 blur 가 발생했을 떄
-  taskInputElement.addEventListener("blur", (e) => {
-    taskInputElement.setAttribute("disabled", "");
+  backLogTaskContent.addEventListener("blur", (e) => {
+    backLogTaskContent.setAttribute("disabled", "");
   });
   // edit 버튼 클릭 시
   editBtn.addEventListener("click", () => {
-    taskInputElement.removeAttribute("disabled");
-    dateInputElement.removeAttribute("disabled");
-    taskInputElement.focus();
+    backLogTaskContent.removeAttribute("disabled");
+    finishDateContent.removeAttribute("disabled");
+    backLogTaskContent.focus();
     choiceImportance();
   });
   // delete 버튼 클릭 시
@@ -36,7 +45,7 @@ const initBackLogEvents = ({
   });
   // 중요도 변경 시
   // dropDownElement ( ul ) 안에 있는 li 를 가져온다
-  const importanceList = dropDownElement.querySelectorAll("li");
+  const importanceList = dropdownOptions.querySelectorAll("li");
   importanceList.forEach((li, index) => {
     li.addEventListener("click", () => {
       // li 가 리스트 형식으로 들어오기 때문에 index 0-2 존재
@@ -54,29 +63,19 @@ const initBackLogEvents = ({
     });
   });
 };
-
-// 이벤트리스너를 모아둔 객체
-const eventListener = {
-  changeDate: (dateInputElement, items) => {},
-  createTitle: (taskInputElement, items) => {},
-  blurContent: (taskInputElement) => {},
-  clickEdit: (editBtn, taskInputElement, dateInputElement) => {},
-  clickDelete: (deleteBtn, backLogContainer, items) => {},
-  changeImportant: (dropDownElement, label, selectedCircle, items) => {},
-  // addTask 버튼을 누를 시 이벤트 발생
-  clickAddTask: (addTaskBtn) => {
-    addTaskBtn.addEventListener("click", () => {
-      createTask();
-      choiceImportance();
-      addLocalStorage();
-    });
-  },
-  clickSearchBtn: () => {
-    searchBtn.addEventListener("click", () => {
-      const keyword = document.querySelector(".searchBar").value.trim();
-      sortTodos(keyword);
-    });
-  },
+// addTask 버튼을 누를 시 이벤트 발생
+const clickAddTask = () => {
+  addTaskBtn.addEventListener("click", () => {
+    createTask();
+    choiceImportance();
+    addLocalStorage();
+  });
+};
+const clickSearchBtn = () => {
+  searchBtn.addEventListener("click", () => {
+    const keyword = document.querySelector(".searchBar").value.trim();
+    sortTodos(keyword);
+  });
 };
 
 // 종료일 마감 임박시 이벤트
@@ -117,9 +116,7 @@ const moveCheckEvent = (backLogContainer, items) => {
     if (backLogContainer.querySelector(".move-btn")) return;
 
     // 우선 "이동" 버튼으로 생성
-    const moveBtn = document.createElement("button");
-    moveBtn.classList.add("move-btn");
-    moveBtn.innerText = ">>>";
+    const moveBtn = addEl("button", "move-btn", ">>>");
 
     moveBtn.addEventListener("click", () => {
       // 버튼 클릭 시 moveCheck = true로 변경
@@ -139,4 +136,10 @@ const moveCheckEvent = (backLogContainer, items) => {
     if (btn) btn.remove();
   });
 };
-export { initBackLogEvents, highlightUrgentTasks, moveCheckEvent };
+export {
+  initBackLogEvents,
+  highlightUrgentTasks,
+  moveCheckEvent,
+  clickAddTask,
+  clickSearchBtn,
+};
