@@ -1,11 +1,15 @@
-import { todos } from "./script";
-import { addEl } from "./element";
-import { initBackLogEvents } from "./initEventListeners.js";
+import { todos, addLocalStorage } from "./script.js";
+import { addEl } from "./element.js";
+import {
+  highlightUrgentTasks,
+  initBackLogEvents,
+  moveCheckEvent,
+} from "./initEventListeners.js";
 
 // 전체 backlog 리스트를 담을 div DOM
 const backLogList = document.querySelector(".backlogScrollArea");
 // todo List 생성 버튼
-const addTask = document.querySelector(".addTask");
+const addTaskBtn = document.querySelector(".addTask");
 
 const searchBtn = document.querySelector(".searchButton");
 
@@ -44,6 +48,7 @@ const sortTodos = (keyword = "") => {
     : todos;
   sortRender(filtered);
   addLocalStorage();
+  highlightUrgentTasks();
 };
 
 // 새로운 Task 생성
@@ -84,8 +89,8 @@ const choiceImportance = () => {
   });
 };
 
-// backLog 중요도 ( 상 중 하 ) 컨테이너 생성 함수
-const addImportanceContainer = (items) => {
+const addBackLogElement = (items) => {
+  // backLog 중요도 ( 상 중 하 ) 컨테이너 생성 함수
   const importanceContainer = addEl("div", "importanceDropdown");
   const selected = addEl("div", "selected");
   const selectedCircle = addEl("span", "circle");
@@ -100,41 +105,24 @@ const addImportanceContainer = (items) => {
 
   const dropdownOptions = addEl("ul", "dropdownOptions hidden");
 
-  const liOne = addEl("li");
+  const liOne = addEl("li", "");
   liOne.dataset.value = 1;
   liOne.innerHTML = `<span class="circle high"></span> 상`;
 
-  const liTwo = addEl("li");
+  const liTwo = addEl("li", "");
   liTwo.dataset.value = 2;
   liTwo.innerHTML = `<span class="circle medium"></span> 중`;
 
-  const liThree = addEl("li");
+  const liThree = addEl("li", "");
   liThree.dataset.value = 3;
   liThree.innerHTML = `<span class="circle low"></span> 하`;
 
-  dropdownOptions.appendChild(liOne);
-  dropdownOptions.appendChild(liTwo);
-  dropdownOptions.appendChild(liThree);
+  dropdownOptions.append(liOne, liTwo, liThree);
+  selected.append(selectedCircle, label);
+  importanceContainer.append(selected, dropdownOptions);
 
-  selected.appendChild(selectedCircle);
-  selected.appendChild(label);
-
-  importanceContainer.appendChild(selected);
-  importanceContainer.appendChild(dropdownOptions);
-
-  return {
-    importanceContainer,
-    selected,
-    dropdownOptions,
-    label,
-    selectedCircle,
-  };
-};
-
-// 달력 컨테이너 생성 함수
-const addDateContainer = (items) => {
+  // 달력 컨테이너 생성 함수
   const finishDateContainer = addEl("div", "finishDateContainer");
-
   const finishDateContent = addEl(
     "input",
     "finishDateContent",
@@ -144,84 +132,96 @@ const addDateContainer = (items) => {
   );
   // todo list 특성 (오늘기준) 이전 날짜를 허용 안하기 위함
   finishDateContent.min = today;
-
   // 정렬 시 date값이 있으면 선택 못하고 변경을 눌렀을 시 변경할 수 있게 disabled 속성을 추가
   items.date == "" ? null : finishDateContent.setAttribute("disabled", "");
-
   finishDateContainer.appendChild(finishDateContent);
 
-  return { finishDateContainer, finishDateContent };
-};
-
-// BackLogContainer, BackLogMainContainer 를 만드는 함수
-const addBackLogContainer = () => {
+  // BackLogContainer, BackLogMainContainer
   // 하나의 backLog 를 담을 컨테이너
   const backLogContainer = addEl("div", "taskContainer");
   // backLog의 컨텐츠들을 담을 main 컨테이너
   const backLogMainContainer = addEl("div", "maintaskContainer");
-  return { backLogContainer, backLogMainContainer };
-};
-// backLog에 들어갈 input Task 생성 함수
-const addBackLogTask = (items) => {
+
+  // backLog에 들어갈 input Task 생성
   // backLog taskContent를 적을 input
   const backLogTaskContent = addEl(
     "input",
     "taskContent",
     "",
-    items.value,
+    items.title,
     "text"
   );
   backLogTaskContent.placeholder = "오늘 할 일을 적어주세요";
-
   // 정렬 시 새롭게 엘리먼트를 만드는데 만약 title 값이 있다면 변경할 수 없게 만듬
   items.title == "" ? null : backLogTaskContent.setAttribute("disabled", "");
-  return { backLogTaskContent };
-};
 
-// 버튼을 만드는 함수
-const addButtons = () => {
+  // 버튼을 만드는
   // 수정 버튼 생성
   const editBtn = addEl("button", "edit", "✎");
   // 삭제 버튼 생성
   const deleteBtn = addEl("button", "delete", "🗑︎");
 
-  return { editBtn, deleteBtn };
+  return {
+    importanceContainer,
+    dropdownOptions,
+    label,
+    finishDateContainer,
+    finishDateContent,
+    backLogContainer,
+    backLogMainContainer,
+    backLogTaskContent,
+    editBtn,
+    deleteBtn,
+  };
 };
 
 // 새로운 Task Element 생성 함수
 const newElement = (items) => {
   const {
     importanceContainer,
-    selected,
     dropdownOptions,
     label,
-    selectedCircle,
-  } = addImportanceContainer(items);
-  const { finishDateContainer, finishDateContent } = addDateContainer(items);
-  const { backLogContainer, backLogMainContainer } = addBackLogContainer(items);
-  const { backLogTaskContent } = addBackLogTask(items);
-  const { editBtn, deleteBtn } = addButtons();
+    finishDateContainer,
+    finishDateContent,
+    backLogContainer,
+    backLogMainContainer,
+    backLogTaskContent,
+    editBtn,
+    deleteBtn,
+  } = addBackLogElement();
 
-  initBackLogEvents(
+  initBackLogEvents({
     finishDateContent,
     backLogTaskContent,
     editBtn,
     deleteBtn,
     dropdownOptions,
     label,
-    items
-  );
+    items,
+  });
+
   moveCheckEvent(backLogContainer, items);
 
-  backLogMainContainer.appendChild(backLogTaskContent);
-  backLogMainContainer.appendChild(importanceContainer);
-  backLogMainContainer.appendChild(editBtn);
-  backLogMainContainer.appendChild(deleteBtn);
-  backLogMainContainer.appendChild(finishDateContainer);
+  backLogMainContainer.append(
+    backLogTaskContent,
+    importanceContainer,
+    editBtn,
+    deleteBtn,
+    finishDateContainer
+  );
 
   backLogContainer.appendChild(backLogMainContainer);
 
   return { backLogContainer };
 };
 
-export { createTask, choiceImportance, newElement };
+export {
+  createTask,
+  choiceImportance,
+  newElement,
+  sortTodos,
+  addTaskBtn,
+  searchBtn,
+  today,
+  backLogList,
+};
