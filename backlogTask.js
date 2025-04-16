@@ -1,3 +1,51 @@
+import { todos } from "./script";
+import { addEl } from "./element";
+import { initBackLogEvents } from "./initEventListeners.js";
+
+// 전체 backlog 리스트를 담을 div DOM
+const backLogList = document.querySelector(".backlogScrollArea");
+// todo List 생성 버튼
+const addTask = document.querySelector(".addTask");
+
+const searchBtn = document.querySelector(".searchButton");
+
+// 기본 데이터 셋에 날짜를 현재 날짜로 만들기 위함
+const year = new Date().getFullYear();
+const month = ("0" + (new Date().getMonth() + 1)).slice(-2);
+const day = ("0" + new Date().getDate()).slice(-2);
+const today = `${year}-${month}-${day}`;
+
+// 정렬 부분을 검색 부분과 합침 ( 렌더링 부분 )
+const sortRender = (items) => {
+  items.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+
+    if (dateA.getTime() === dateB.getTime()) {
+      // 날짜가 같으면 importance 값을 비교
+      return a.importance - b.importance;
+    } else {
+      // 날짜를 기준으로 정렬
+      return dateA - dateB;
+    }
+  });
+
+  backLogList.innerHTML = "";
+  items.forEach((todo) => {
+    const { backLogContainer } = newElement(todo);
+    backLogList.appendChild(backLogContainer);
+  });
+};
+
+// 정렬 코드
+const sortTodos = (keyword = "") => {
+  const filtered = keyword
+    ? todos.filter((todo) => todo.title.includes(keyword))
+    : todos;
+  sortRender(filtered);
+  addLocalStorage();
+};
+
 // 새로운 Task 생성
 const createTask = () => {
   // items(todo) 의 기본 데이터 구조
@@ -35,19 +83,14 @@ const choiceImportance = () => {
     });
   });
 };
+
 // backLog 중요도 ( 상 중 하 ) 컨테이너 생성 함수
 const addImportanceContainer = (items) => {
-  const importanceContainer = document.createElement("div");
-  importanceContainer.classList.add("importanceDropdown");
+  const importanceContainer = addEl("div", "importanceDropdown");
+  const selected = addEl("div", "selected");
+  const selectedCircle = addEl("span", "circle");
 
-  const selected = document.createElement("div");
-  selected.classList.add("selected");
-
-  const selectedCircle = document.createElement("span");
-  selectedCircle.classList.add("circle");
-
-  const label = document.createElement("span");
-  label.classList.add("label");
+  const label = addEl("span", "label");
   // 처음 생성 시 중요도는 (하) 고정
   items.importance === 1
     ? ((label.innerText = "상"), selectedCircle.classList.add("high"))
@@ -55,19 +98,17 @@ const addImportanceContainer = (items) => {
     ? ((label.innerText = "중"), selectedCircle.classList.add("medium"))
     : ((label.innerText = "하"), selectedCircle.classList.add("low"));
 
-  const dropdownOptions = document.createElement("ul");
-  dropdownOptions.classList.add("dropdownOptions");
-  dropdownOptions.classList.add("hidden");
+  const dropdownOptions = addEl("ul", "dropdownOptions hidden");
 
-  const liOne = document.createElement("li");
+  const liOne = addEl("li");
   liOne.dataset.value = 1;
   liOne.innerHTML = `<span class="circle high"></span> 상`;
 
-  const liTwo = document.createElement("li");
+  const liTwo = addEl("li");
   liTwo.dataset.value = 2;
   liTwo.innerHTML = `<span class="circle medium"></span> 중`;
 
-  const liThree = document.createElement("li");
+  const liThree = addEl("li");
   liThree.dataset.value = 3;
   liThree.innerHTML = `<span class="circle low"></span> 하`;
 
@@ -92,15 +133,17 @@ const addImportanceContainer = (items) => {
 
 // 달력 컨테이너 생성 함수
 const addDateContainer = (items) => {
-  const finishDateContainer = document.createElement("div");
-  finishDateContainer.classList.add("finishDateContainer");
+  const finishDateContainer = addEl("div", "finishDateContainer");
 
-  const finishDateContent = document.createElement("input");
-  finishDateContent.type = "date";
-  finishDateContent.classList.add("finishDateContent");
+  const finishDateContent = addEl(
+    "input",
+    "finishDateContent",
+    "",
+    items.date,
+    "date"
+  );
   // todo list 특성 (오늘기준) 이전 날짜를 허용 안하기 위함
   finishDateContent.min = today;
-  finishDateContent.value = items.date;
 
   // 정렬 시 date값이 있으면 선택 못하고 변경을 눌렀을 시 변경할 수 있게 disabled 속성을 추가
   items.date == "" ? null : finishDateContent.setAttribute("disabled", "");
@@ -113,22 +156,22 @@ const addDateContainer = (items) => {
 // BackLogContainer, BackLogMainContainer 를 만드는 함수
 const addBackLogContainer = () => {
   // 하나의 backLog 를 담을 컨테이너
-  const backLogContainer = document.createElement("div");
-  backLogContainer.classList.add("taskContainer");
+  const backLogContainer = addEl("div", "taskContainer");
   // backLog의 컨텐츠들을 담을 main 컨테이너
-  const backLogMainContainer = document.createElement("div");
-  backLogMainContainer.classList.add("maintaskContainer");
-
+  const backLogMainContainer = addEl("div", "maintaskContainer");
   return { backLogContainer, backLogMainContainer };
 };
 // backLog에 들어갈 input Task 생성 함수
 const addBackLogTask = (items) => {
   // backLog taskContent를 적을 input
-  const backLogTaskContent = document.createElement("input");
-  backLogTaskContent.classList.add("taskContent");
+  const backLogTaskContent = addEl(
+    "input",
+    "taskContent",
+    "",
+    items.value,
+    "text"
+  );
   backLogTaskContent.placeholder = "오늘 할 일을 적어주세요";
-  backLogTaskContent.type = "text";
-  backLogTaskContent.value = items.title;
 
   // 정렬 시 새롭게 엘리먼트를 만드는데 만약 title 값이 있다면 변경할 수 없게 만듬
   items.title == "" ? null : backLogTaskContent.setAttribute("disabled", "");
@@ -138,13 +181,9 @@ const addBackLogTask = (items) => {
 // 버튼을 만드는 함수
 const addButtons = () => {
   // 수정 버튼 생성
-  const editBtn = document.createElement("button");
-  editBtn.classList.add("edit");
-  editBtn.innerText = "✎";
+  const editBtn = addEl("button", "edit", "✎");
   // 삭제 버튼 생성
-  const deleteBtn = document.createElement("button");
-  deleteBtn.classList.add("delete");
-  deleteBtn.innerText = "🗑︎";
+  const deleteBtn = addEl("button", "delete", "🗑︎");
 
   return { editBtn, deleteBtn };
 };
@@ -163,13 +202,15 @@ const newElement = (items) => {
   const { backLogTaskContent } = addBackLogTask(items);
   const { editBtn, deleteBtn } = addButtons();
 
-  eventListener.changeDate(finishDateContent, items);
-  eventListener.createTitle(backLogTaskContent, items);
-  eventListener.blurContent(backLogTaskContent);
-  eventListener.clickEdit(editBtn, backLogTaskContent, finishDateContent);
-  eventListener.clickDelete(deleteBtn, backLogContainer, items);
-  eventListener.changeImportant(dropdownOptions, label, selectedCircle, items);
-
+  initBackLogEvents(
+    finishDateContent,
+    backLogTaskContent,
+    editBtn,
+    deleteBtn,
+    dropdownOptions,
+    label,
+    items
+  );
   moveCheckEvent(backLogContainer, items);
 
   backLogMainContainer.appendChild(backLogTaskContent);
