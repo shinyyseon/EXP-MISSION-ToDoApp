@@ -140,8 +140,6 @@ const createEditableSubTaskElement = (backlogId, subTask) => {
 
 //버튼 이벤트 연결
 export const initSubtaskAddButtons = () => {
-  console.log("현재 todos", todos);
-
   document.querySelectorAll('.currentTaskWrapper').forEach(wrapper => {
     const btn = wrapper.querySelector('.addSubtaskBtn');
     const container = wrapper.querySelector('.subtaskContainer');
