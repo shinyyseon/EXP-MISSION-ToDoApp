@@ -188,11 +188,12 @@ const newElement = (items) => {
     backLogTaskContent,
     editBtn,
     deleteBtn,
-  } = addBackLogElement();
+  } = addBackLogElement(items);
 
   initBackLogEvents({
     finishDateContent,
     backLogTaskContent,
+    backLogContainer,
     editBtn,
     deleteBtn,
     dropdownOptions,
@@ -220,8 +221,6 @@ export {
   choiceImportance,
   newElement,
   sortTodos,
-  addTaskBtn,
-  searchBtn,
   today,
   backLogList,
 };

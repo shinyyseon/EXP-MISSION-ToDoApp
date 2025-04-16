@@ -1,15 +1,11 @@
 import { createTask, sortTodos, backLogList } from "./backlogTask.js";
 import { addLocalStorage, todoDelete } from "./script.js";
-import {
-  addTaskBtn,
-  searchBtn,
-  choiceImportance,
-  today,
-} from "./backlogTask.js";
+import { choiceImportance, today } from "./backlogTask.js";
 import { addEl } from "./element.js";
 const initBackLogEvents = ({
   finishDateContent,
   backLogTaskContent,
+  backLogContainer,
   editBtn,
   deleteBtn,
   dropdownOptions,
@@ -63,8 +59,11 @@ const initBackLogEvents = ({
     });
   });
 };
+// todo List 생성 버튼
 // addTask 버튼을 누를 시 이벤트 발생
 const clickAddTask = () => {
+  const addTaskBtn = document.querySelector(".addTask");
+
   addTaskBtn.addEventListener("click", () => {
     createTask();
     choiceImportance();
@@ -72,6 +71,8 @@ const clickAddTask = () => {
   });
 };
 const clickSearchBtn = () => {
+  const searchBtn = document.querySelector(".searchButton");
+
   searchBtn.addEventListener("click", () => {
     const keyword = document.querySelector(".searchBar").value.trim();
     sortTodos(keyword);
