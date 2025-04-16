@@ -8,10 +8,6 @@ import {
 
 // 전체 backlog 리스트를 담을 div DOM
 const backLogList = document.querySelector(".backlogScrollArea");
-// todo List 생성 버튼
-const addTaskBtn = document.querySelector(".addTask");
-
-const searchBtn = document.querySelector(".searchButton");
 
 // 기본 데이터 셋에 날짜를 현재 날짜로 만들기 위함
 const year = new Date().getFullYear();
