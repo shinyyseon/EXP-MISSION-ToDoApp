@@ -1,4 +1,9 @@
-import { highlightUrgentTasks } from "./initEventListeners.js";
+import {
+  highlightUrgentTasks,
+  clickAddTask,
+  clickSearchBtn,
+} from "./initEventListeners.js";
+import { newElement, backLogList } from "./backlogTask.js";
 
 let todos = [];
 
@@ -6,7 +11,6 @@ let todos = [];
 const addLocalStorage = () => {
   const data = JSON.stringify(todos);
   localStorage.setItem("todoList", data);
-  highlightUrgentTasks();
 };
 
 // 리로드 했을 시 localStorage에 todoList 가 있다면 불러와서 JSON 형태로 만든 후 todos 에 초기화
@@ -26,5 +30,18 @@ const displayTodoList = () => {
     const { backLogContainer } = newElement(item);
     backLogList.appendChild(backLogContainer);
   }
-  highlightUrgentTasks();
 };
+
+const todoDelete = (items) => {
+  todos = todos.filter((item) => item.id !== items.id);
+  addLocalStorage();
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  displayTodoList();
+  clickAddTask();
+  clickSearchBtn();
+  highlightUrgentTasks();
+});
+
+export { addLocalStorage, todoDelete, todos };
