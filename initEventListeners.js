@@ -1,63 +1,68 @@
+const initBackLogEvents = ({
+  dateInputElement,
+  taskInputElement,
+  editBtn,
+  deleteBtn,
+  dropDownElement,
+  label,
+  items,
+}) => {
+  // 날짜를 변경 했을 시
+  dateInputElement.addEventListener("change", (e) => {
+    items.date = e.target.value;
+    sortTodos();
+    addLocalStorage();
+  });
+  // 제목을 입력 시
+  taskInputElement.addEventListener("input", (e) => {
+    items.title = e.target.value;
+    addLocalStorage();
+  });
+  // input Element에서 blur 가 발생했을 떄
+  taskInputElement.addEventListener("blur", (e) => {
+    taskInputElement.setAttribute("disabled", "");
+  });
+  // edit 버튼 클릭 시
+  editBtn.addEventListener("click", () => {
+    taskInputElement.removeAttribute("disabled");
+    dateInputElement.removeAttribute("disabled");
+    taskInputElement.focus();
+    choiceImportance();
+  });
+  // delete 버튼 클릭 시
+  deleteBtn.addEventListener("click", (e) => {
+    backLogList.removeChild(backLogContainer);
+    todoDelete(items);
+  });
+  // 중요도 변경 시
+  // dropDownElement ( ul ) 안에 있는 li 를 가져온다
+  const importanceList = dropDownElement.querySelectorAll("li");
+  importanceList.forEach((li, index) => {
+    li.addEventListener("click", () => {
+      // li 가 리스트 형식으로 들어오기 때문에 index 0-2 존재
+      // 0 - 상, 1 - 중, 2 - 하
+      items.importance = index + 1;
+      // 중요도 1, 2, 3 에 대해 그때에 해당하는 스타일을 보여주는 삼항 연산자
+      items.importance === 1
+        ? (label.innerText = "상")
+        : items.importance === 2
+        ? (label.innerText = "중")
+        : (label.innerText = "하");
+      sortTodos();
+      highlightUrgentTasks();
+      addLocalStorage();
+    });
+  });
+};
+
 // 이벤트리스너를 모아둔 객체
 const eventListener = {
-  // 날짜를 변경 했을 시
-  changeDate: (dateInputElement, items) => {
-    dateInputElement.addEventListener("change", (e) => {
-      items.date = e.target.value;
-      sortTodos();
-      addLocalStorage();
-    });
-  },
-  // 제목을 입력 시
-  createTitle: (taskInputElement, items) => {
-    taskInputElement.addEventListener("input", (e) => {
-      items.title = e.target.value;
-      addLocalStorage();
-    });
-  },
-  // input Element에서 blur 가 발생했을 떄
-  blurContent: (taskInputElement) => {
-    taskInputElement.addEventListener("blur", (e) => {
-      taskInputElement.setAttribute("disabled", "");
-    });
-  },
-  // edit 버튼 클릭 시
-  clickEdit: (editBtn, taskInputElement, dateInputElement) => {
-    editBtn.addEventListener("click", () => {
-      taskInputElement.removeAttribute("disabled");
-      dateInputElement.removeAttribute("disabled");
-      taskInputElement.focus();
-      choiceImportance();
-    });
-  },
-  // delete 버튼 클릭 시
-  clickDelete: (deleteBtn, backLogContainer, items) => {
-    deleteBtn.addEventListener("click", (e) => {
-      backLogList.removeChild(backLogContainer);
-      todoDelete(items);
-    });
-  },
-  // 중요도 변경 시
-  changeImportant: (dropDownElement, label, selectedCircle, items) => {
-    // dropDownElement ( ul ) 안에 있는 li 를 가져온다
-    const importanceList = dropDownElement.querySelectorAll("li");
-    importanceList.forEach((li, index) => {
-      li.addEventListener("click", () => {
-        // li 가 리스트 형식으로 들어오기 때문에 index 0-2 존재
-        // 0 - 상, 1 - 중, 2 - 하
-        items.importance = index + 1;
-        // 중요도 1, 2, 3 에 대해 그때에 해당하는 스타일을 보여주는 삼항 연산자
-        items.importance === 1
-          ? (label.innerText = "상")
-          : items.importance === 2
-          ? (label.innerText = "중")
-          : (label.innerText = "하");
-        sortTodos();
-        highlightUrgentTasks();
-        addLocalStorage();
-      });
-    });
-  },
+  changeDate: (dateInputElement, items) => {},
+  createTitle: (taskInputElement, items) => {},
+  blurContent: (taskInputElement) => {},
+  clickEdit: (editBtn, taskInputElement, dateInputElement) => {},
+  clickDelete: (deleteBtn, backLogContainer, items) => {},
+  changeImportant: (dropDownElement, label, selectedCircle, items) => {},
   // addTask 버튼을 누를 시 이벤트 발생
   clickAddTask: (addTaskBtn) => {
     addTaskBtn.addEventListener("click", () => {
@@ -134,4 +139,4 @@ const moveCheckEvent = (backLogContainer, items) => {
     if (btn) btn.remove();
   });
 };
-export { eventListener, highlightUrgentTasks, moveCheckEvent };
+export { initBackLogEvents, highlightUrgentTasks, moveCheckEvent };
