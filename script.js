@@ -1,5 +1,8 @@
 import { highlightUrgentTasks, initBackLogButtons } from "./initEventListeners.js";
 import { addBackLogElement, backLogList } from "./backlogTask.js";
+import { checkListBody } from './currentTask.js';
+import { renderInitialSubTasks } from './subTask.js';
+import { renderCompletedTasks } from './completedTask.js';
 
 let todos = [];
 
@@ -7,6 +10,10 @@ let todos = [];
 const addLocalStorage = () => {
   const data = JSON.stringify(todos);
   localStorage.setItem("todoList", data);
+};
+// localStorage에 List 저장
+const saveToLocalStorage = () => {
+  localStorage.setItem("todoList", JSON.stringify(todos));
 };
 
 // 리로드 했을 시 localStorage에 todoList 가 있다면 불러와서 JSON 형태로 만든 후 todos 에 초기화
@@ -40,6 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
   displayTodoList();
   initBackLogButtons();
   // 초기 렌더링 시 종료일 마감에 대한 이벤트
+  // currentTask.js의 함수
+  checkListBody(); // 메인 태스크 렌더링
+
+  // subTask.js의 함수
+  renderInitialSubTasks();    // 하위 태스크 그리기
+  // completedTask.js의 함수
+  renderCompletedTasks(todos);
 });
 
-export { addLocalStorage, todoDelete, todos };
+export { addLocalStorage, todoDelete, todos, saveToLocalStorage };

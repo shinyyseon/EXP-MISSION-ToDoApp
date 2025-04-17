@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Todo list</title>
         <link rel="stylesheet" href="style.css" />
-        <script src="script.js" defer type="module"></script>
     </head>
     <body>
         <header class="header">
@@ -43,130 +42,6 @@
                     <hr />
                 </div>
                 <div class="currentScrollArea">
-                    <div class="currentTaskWrapper">
-                        <div class="currentTaskContainer">
-                            <!-- 여기에 main task가 js로 들어올 예정 -->
-                            <div class="mainTaskEx">
-                                <span class="mainTaskName">스터디 회의 준비</span>
-                                <div class="taskDueDate">종료일: 2025-04-10</div>
-                            </div>
-                            <div class="taskButtons">
-                                <button class="edit">✎</button>
-                                <!-- 접기/펼치기 버튼 -->
-                                <button class="toggleSubtask">▼</button>
-                            </div>
-                        </div>
-
-                        <!-- 하위 태스크: 기본은 숨김 -->
-                        <div class="subtaskContainer hidden">
-                            <!-- 여기에 하위태스크 js 들어옴 -->
-                            <div class="subtaskItem">
-                                <input type="checkbox" class="subtaskCheck" />
-                                <span class="subtaskText">하위 태스크 내용</span>
-                                <button class="subtaskDelete">🗑︎</button>
-                            </div>
-                            <div class="subtaskItem">
-                                <input type="checkbox" class="subtaskCheck" />
-                                <span class="subtaskText">하위 태스크 내용2</span>
-                                <button class="subtaskDelete">🗑︎</button>
-                            </div>
-
-                            <button class="addSubtaskBtn">+</button>
-                        </div>
-                    </div>
-                    <div class="currentTaskWrapper">
-                        <div class="currentTaskContainer">
-                            <!-- 여기에 main task가 js로 들어올 예정 -->
-                            <div class="mainTaskEx">
-                                <span class="mainTaskName">스터디 회의 준비2</span>
-                                <div class="taskDueDate">종료일: 2025-04-10</div>
-                            </div>
-                            <div class="taskButtons">
-                                <button class="edit">✎</button>
-                                <!-- 접기/펼치기 버튼 -->
-                                <button class="toggleSubtask">▼</button>
-                            </div>
-                        </div>
-
-                        <!-- 하위 태스크: 기본은 숨김 -->
-                        <div class="subtaskContainer hidden">
-                            <!-- 여기에 하위태스크 js 들어옴 -->
-                            <div class="subtaskItem">
-                                <input type="checkbox" class="subtaskCheck" />
-                                <span class="subtaskText">하위 태스크 내용</span>
-                                <button class="subtaskDelete">🗑︎</button>
-                            </div>
-                            <div class="subtaskItem">
-                                <input type="checkbox" class="subtaskCheck" />
-                                <span class="subtaskText">하위 태스크 내용2</span>
-                                <button class="subtaskDelete">🗑︎</button>
-                            </div>
-
-                            <button class="addSubtaskBtn">+</button>
-                        </div>
-                    </div>
-                    <div class="currentTaskWrapper">
-                        <div class="currentTaskContainer">
-                            <!-- 여기에 main task가 js로 들어올 예정 -->
-                            <div class="mainTaskEx">
-                                <span class="mainTaskName">스터디 회의 준비2</span>
-                                <div class="taskDueDate">종료일: 2025-04-10</div>
-                            </div>
-                            <div class="taskButtons">
-                                <button class="edit">✎</button>
-                                <!-- 접기/펼치기 버튼 -->
-                                <button class="toggleSubtask">▼</button>
-                            </div>
-                        </div>
-
-                        <!-- 하위 태스크: 기본은 숨김 -->
-                        <div class="subtaskContainer hidden">
-                            <!-- 여기에 하위태스크 js 들어옴 -->
-                            <div class="subtaskItem">
-                                <input type="checkbox" class="subtaskCheck" />
-                                <span class="subtaskText">하위 태스크 내용</span>
-                                <button class="subtaskDelete">🗑︎</button>
-                            </div>
-                            <div class="subtaskItem">
-                                <input type="checkbox" class="subtaskCheck" />
-                                <span class="subtaskText">하위 태스크 내용2</span>
-                                <button class="subtaskDelete">🗑︎</button>
-                            </div>
-
-                            <button class="addSubtaskBtn">+</button>
-                        </div>
-                    </div>
-                    <div class="currentTaskWrapper">
-                        <div class="currentTaskContainer">
-                            <!-- 여기에 main task가 js로 들어올 예정 -->
-                            <div class="mainTaskEx">
-                                <span class="mainTaskName">스터디 회의 준비2</span>
-                                <div class="taskDueDate">종료일: 2025-04-10</div>
-                            </div>
-                            <div class="taskButtons">
-                                <button class="edit">✎</button>
-                                <!-- 접기/펼치기 버튼 -->
-                                <button class="toggleSubtask">▼</button>
-                            </div>
-                        </div>
-
-                        <!-- 하위 태스크: 기본은 숨김 -->
-                        <div class="subtaskContainer hidden">
-                            <!-- 여기에 하위태스크 js 들어옴 -->
-                            <div class="subtaskItem">
-                                <input type="checkbox" class="subtaskCheck" />
-                                <span class="subtaskText">하위 태스크 내용</span>
-                                <button class="subtaskDelete">🗑︎</button>
-                            </div>
-                            <div class="subtaskItem">
-                                <input type="checkbox" class="subtaskCheck" />
-                                <span class="subtaskText">하위 태스크 내용2</span>
-                                <button class="subtaskDelete">🗑︎</button>
-                            </div>
-
-                            <button class="addSubtaskBtn">+</button>
-                        </div>
-                    </div>
                 </div>
             </section>
 
@@ -201,5 +76,7 @@
                 </div>
             </section>
         </main>
+
+        <script src="script.js" defer type="module"></script>
     </body>
 </html>
