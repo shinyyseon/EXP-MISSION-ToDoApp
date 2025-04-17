@@ -1,9 +1,5 @@
-import {
-  highlightUrgentTasks,
-  clickAddTask,
-  clickSearchBtn,
-} from "./initEventListeners.js";
-import { newElement, backLogList } from "./backlogTask.js";
+import { highlightUrgentTasks, initBackLogButtons } from "./initEventListeners.js";
+import { addBackLogElement, backLogList } from "./backlogTask.js";
 
 let todos = [];
 
@@ -27,21 +23,23 @@ const displayTodoList = () => {
   loadLocalStorage();
   for (let i = 0; i < todos.length; i++) {
     const item = todos[i];
-    const { backLogContainer } = newElement(item);
+    const { backLogContainer } = addBackLogElement(item);
     backLogList.appendChild(backLogContainer);
   }
+  highlightUrgentTasks();
 };
-
+// initEventListener 에서 import 한 todo는 상수 취급을 하기에 todo 삭제 불가능
+// 해당 scripte
 const todoDelete = (items) => {
   todos = todos.filter((item) => item.id !== items.id);
   addLocalStorage();
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+  // 초기 렌더링 시 localStorage 에 있는 데이터를 렌더링
   displayTodoList();
-  clickAddTask();
-  clickSearchBtn();
-  highlightUrgentTasks();
+  initBackLogButtons();
+  // 초기 렌더링 시 종료일 마감에 대한 이벤트
 });
 
 export { addLocalStorage, todoDelete, todos };

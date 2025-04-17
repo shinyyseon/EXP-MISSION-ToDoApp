@@ -3,17 +3,7 @@ import { addLocalStorage, todoDelete } from "./script.js";
 import { addEl } from "./element.js";
 
 // 초기 이벤트
-const initBackLogEvents = ({
-  finishDateContent,
-  backLogTaskContent,
-  backLogContainer,
-  editBtn,
-  deleteBtn,
-  dropdownOptions,
-  selected,
-  label,
-  items,
-}) => {
+const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogContainer, editBtn, deleteBtn, dropdownOptions, selected, label, items }) => {
   // 날짜를 변경 했을 시
   finishDateContent.addEventListener("change", (e) => {
     items.date = e.target.value;
@@ -49,11 +39,7 @@ const initBackLogEvents = ({
       // 0 - 상, 1 - 중, 2 - 하
       items.importance = index + 1;
       // 중요도 1, 2, 3 에 대해 그때에 해당하는 스타일을 보여주는 삼항 연산자
-      items.importance === 1
-        ? (label.innerText = "상")
-        : items.importance === 2
-        ? (label.innerText = "중")
-        : (label.innerText = "하");
+      items.importance === 1 ? (label.innerText = "상") : items.importance === 2 ? (label.innerText = "중") : (label.innerText = "하");
       sortTodos();
       highlightUrgentTasks();
       addLocalStorage();
@@ -122,11 +108,7 @@ const highlightUrgentTasks = () => {
 
       // 시/분/초 제거하여 날짜만 비교
       const todayOnly = new Date(today);
-      const dueOnly = new Date(
-        dueDate.getFullYear(),
-        dueDate.getMonth(),
-        dueDate.getDate()
-      );
+      const dueOnly = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
 
       const diffTime = dueOnly - todayOnly;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));

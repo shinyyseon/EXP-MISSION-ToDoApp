@@ -1,9 +1,6 @@
 import { todos, addLocalStorage } from "./script.js";
 import { addEl } from "./element.js";
-import {
-  highlightUrgentTasks,
-  initBackLogEvents,
-} from "./initEventListeners.js";
+import { highlightUrgentTasks, initBackLogEvents } from "./initEventListeners.js";
 
 // 전체 backlog 리스트를 담을 div DOM
 const backLogList = document.querySelector(".backlogScrollArea");
@@ -31,16 +28,14 @@ const sortRender = (items) => {
 
   backLogList.innerHTML = "";
   items.forEach((todo) => {
-    const { backLogContainer } = newElement(todo);
+    const { backLogContainer } = addBackLogElement(todo);
     backLogList.appendChild(backLogContainer);
   });
 };
 
 // 정렬 코드
 const sortTodos = (keyword = "") => {
-  const filtered = keyword
-    ? todos.filter((todo) => todo.title.includes(keyword))
-    : todos;
+  const filtered = keyword ? todos.filter((todo) => todo.title.includes(keyword)) : todos;
   sortRender(filtered);
   addLocalStorage();
   highlightUrgentTasks();
@@ -61,7 +56,7 @@ const createTask = () => {
     list: [],
   };
   todos.unshift(items);
-  const { backLogContainer } = newElement(items);
+  const { backLogContainer } = addBackLogElement(items);
   backLogList.prepend(backLogContainer);
 };
 
@@ -99,13 +94,7 @@ const addBackLogElement = (items) => {
 
   // 달력 컨테이너 생성 함수
   const finishDateContainer = addEl("div", "finishDateContainer");
-  const finishDateContent = addEl(
-    "input",
-    "finishDateContent",
-    "",
-    items.date,
-    "date"
-  );
+  const finishDateContent = addEl("input", "finishDateContent", "", items.date, "date");
   // todo list 특성 (오늘기준) 이전 날짜를 허용 안하기 위함
   finishDateContent.min = today;
   // 정렬 시 date값이 있으면 선택 못하고 변경을 눌렀을 시 변경할 수 있게 disabled 속성을 추가
@@ -120,13 +109,7 @@ const addBackLogElement = (items) => {
 
   // backLog에 들어갈 input Task 생성
   // backLog taskContent를 적을 input
-  const backLogTaskContent = addEl(
-    "input",
-    "taskContent",
-    "",
-    items.title,
-    "text"
-  );
+  const backLogTaskContent = addEl("input", "taskContent", "", items.title, "text");
   backLogTaskContent.placeholder = "오늘 할 일을 적어주세요";
   // 정렬 시 새롭게 엘리먼트를 만드는데 만약 title 값이 있다면 변경할 수 없게 만듬
   items.title == "" ? null : backLogTaskContent.setAttribute("disabled", "");
@@ -137,60 +120,12 @@ const addBackLogElement = (items) => {
   // 삭제 버튼 생성
   const deleteBtn = addEl("button", "delete", "🗑︎");
 
-  return {
-    importanceContainer,
-    dropdownOptions,
-    label,
-    selected,
-    finishDateContainer,
-    finishDateContent,
-    backLogContainer,
-    backLogMainContainer,
-    backLogTaskContent,
-    editBtn,
-    deleteBtn,
-  };
-};
+  initBackLogEvents({ finishDateContent, backLogTaskContent, backLogContainer, editBtn, deleteBtn, dropdownOptions, selected, label, items });
 
-// 새로운 Task Element 생성 함수
-const newElement = (items) => {
-  const {
-    importanceContainer,
-    dropdownOptions,
-    label,
-    selected,
-    finishDateContainer,
-    finishDateContent,
-    backLogContainer,
-    backLogMainContainer,
-    backLogTaskContent,
-    editBtn,
-    deleteBtn,
-  } = addBackLogElement(items);
-
-  initBackLogEvents({
-    finishDateContent,
-    backLogTaskContent,
-    backLogContainer,
-    editBtn,
-    deleteBtn,
-    dropdownOptions,
-    selected,
-    label,
-    items,
-  });
-
-  backLogMainContainer.append(
-    backLogTaskContent,
-    importanceContainer,
-    editBtn,
-    deleteBtn,
-    finishDateContainer
-  );
-
+  backLogMainContainer.append(backLogTaskContent, importanceContainer, editBtn, deleteBtn, finishDateContainer);
   backLogContainer.appendChild(backLogMainContainer);
 
   return { backLogContainer };
 };
 
-export { createTask, newElement, sortTodos, today, backLogList };
+export { createTask, addBackLogElement, sortTodos, today, backLogList };
