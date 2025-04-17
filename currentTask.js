@@ -1,7 +1,6 @@
 import { initCurrentTaskEvents } from './initEventListeners.js';
 import { addEl } from './element.js';
 import { todos, saveToLocalStorage } from './script.js';
-import { renderInitialSubTasks } from './subTask.js';
 
 const checkList = document.querySelector(".currentScrollArea");
 
@@ -11,7 +10,6 @@ const checkListBody = () => {
   todos
       .filter(todo => todo.moveCheck && !todo.complete)
       .forEach(todo => checkList.appendChild(addCheckListBodyElement(todo)));
-  //renderInitialSubTasks();
 };
 
 // body 요소 그리기

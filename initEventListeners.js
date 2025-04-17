@@ -2,7 +2,7 @@ import { addLocalStorage, todoDelete, saveToLocalStorage, todos } from "./script
 import { addEl } from "./element.js";
 import { createTask, sortTodos, backLogList, today } from "./backlogTask.js";
 import { finishEdit, checkListBody } from './currentTask.js';
-import { toggleSubtask, initSubtaskAddButtons } from './subTask.js';
+import { toggleSubtask, initSubtaskAddButtons, renderInitialSubTasks } from './subTask.js';
 import { renderCompletedTasks } from './completedTask.js';
 
 // 초기 이벤트
@@ -75,6 +75,7 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
       console.log("moveCheck:", items);
       window.dispatchEvent(new CustomEvent("updateChecklist"));
       addLocalStorage();
+      renderInitialSubTasks();
     });
 
     // 이동 버튼을 backLogContainer에 추가함
@@ -208,6 +209,7 @@ const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, 
     const allChecked = backlog.list.every(sub => sub.check === true);
     backlog.complete = allChecked;
     if(allChecked)     window.dispatchEvent(new CustomEvent("updateChecklist"));
+    renderInitialSubTasks();
     saveToLocalStorage();
   });
 

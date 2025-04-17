@@ -46,7 +46,7 @@ const createTask = () => {
   // items(todo) 의 기본 데이터 구조
   const items = {
     // 일단 id를 고유한 new Date()로 나둠
-    id: new Date(),
+    id: new Date().toISOString(),
     title: "",
     moveCheck: false,
     complet: false,
