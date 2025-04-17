@@ -3,7 +3,6 @@ import { addEl } from "./element.js";
 import {
   highlightUrgentTasks,
   initBackLogEvents,
-  moveCheckEvent,
 } from "./initEventListeners.js";
 
 // 전체 backlog 리스트를 담을 div DOM
@@ -196,8 +195,6 @@ const newElement = (items) => {
     label,
     items,
   });
-
-  moveCheckEvent(backLogContainer, items);
 
   backLogMainContainer.append(
     backLogTaskContent,

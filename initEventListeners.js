@@ -1,7 +1,14 @@
-import { createTask, sortTodos, backLogList } from "./backlogTask.js";
+import {
+  createTask,
+  sortTodos,
+  backLogList,
+  choiceImportance,
+  today,
+} from "./backlogTask.js";
 import { addLocalStorage, todoDelete } from "./script.js";
-import { choiceImportance, today } from "./backlogTask.js";
 import { addEl } from "./element.js";
+
+// 초기 이벤트
 const initBackLogEvents = ({
   finishDateContent,
   backLogTaskContent,
@@ -58,6 +65,31 @@ const initBackLogEvents = ({
       addLocalStorage();
     });
   });
+
+  backLogContainer.addEventListener("mouseenter", () => {
+    // 이미 .move-btn이 있는 경우 중복 생성을 막기 위해 함수 종료
+    if (backLogContainer.querySelector(".move-btn")) return;
+
+    // 우선 "이동" 버튼으로 생성
+    const moveBtn = addEl("button", "move-btn", ">>>");
+
+    moveBtn.addEventListener("click", () => {
+      // 버튼 클릭 시 moveCheck = true로 변경
+      items.moveCheck = true;
+      console.log("moveCheck:", items);
+      addLocalStorage();
+    });
+
+    // 이동 버튼을 backLogContainer에 추가함
+    backLogContainer.appendChild(moveBtn);
+  });
+
+  // 마우스가 backLogContainer에서 벗어났을 때 이벤트
+  backLogContainer.addEventListener("mouseleave", () => {
+    // .move-btn이 있는지 확인 후 있다면 제거
+    const btn = backLogContainer.querySelector(".move-btn");
+    if (btn) btn.remove();
+  });
 };
 // todo List 생성 버튼
 // addTask 버튼을 누를 시 이벤트 발생
@@ -111,36 +143,10 @@ const highlightUrgentTasks = () => {
 };
 
 // backLogContainer에 마우스 hover 이벤트 설정
-const moveCheckEvent = (backLogContainer, items) => {
-  backLogContainer.addEventListener("mouseenter", () => {
-    // 이미 .move-btn이 있는 경우 중복 생성을 막기 위해 함수 종료
-    if (backLogContainer.querySelector(".move-btn")) return;
 
-    // 우선 "이동" 버튼으로 생성
-    const moveBtn = addEl("button", "move-btn", ">>>");
-
-    moveBtn.addEventListener("click", () => {
-      // 버튼 클릭 시 moveCheck = true로 변경
-      items.moveCheck = true;
-      console.log("moveCheck:", items);
-      addLocalStorage();
-    });
-
-    // 이동 버튼을 backLogContainer에 추가함
-    backLogContainer.appendChild(moveBtn);
-  });
-
-  // 마우스가 backLogContainer에서 벗어났을 때 이벤트
-  backLogContainer.addEventListener("mouseleave", () => {
-    // .move-btn이 있는지 확인 후 있다면 제거
-    const btn = backLogContainer.querySelector(".move-btn");
-    if (btn) btn.remove();
-  });
-};
 export {
   initBackLogEvents,
   highlightUrgentTasks,
-  moveCheckEvent,
   clickAddTask,
   clickSearchBtn,
 };
