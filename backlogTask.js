@@ -160,6 +160,7 @@ const addBackLogElement = (items) => {
     importanceContainer,
     dropdownOptions,
     label,
+    selected,
     finishDateContainer,
     finishDateContent,
     backLogContainer,
@@ -176,6 +177,7 @@ const newElement = (items) => {
     importanceContainer,
     dropdownOptions,
     label,
+    selected,
     finishDateContainer,
     finishDateContent,
     backLogContainer,
@@ -192,6 +194,7 @@ const newElement = (items) => {
     editBtn,
     deleteBtn,
     dropdownOptions,
+    selected,
     label,
     items,
   });

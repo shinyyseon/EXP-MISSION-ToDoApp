@@ -16,6 +16,7 @@ const initBackLogEvents = ({
   editBtn,
   deleteBtn,
   dropdownOptions,
+  selected,
   label,
   items,
 }) => {
@@ -65,6 +66,16 @@ const initBackLogEvents = ({
       addLocalStorage();
     });
   });
+  selected.addEventListener("click", () => {
+    dropdownOptions.classList.toggle("hidden");
+  });
+
+  dropdownOptions.querySelectorAll("li").forEach((option) => {
+    dropdownOptions.addEventListener("click", () => {
+      selected.innerHTML = option.innerHTML;
+      dropdownOptions.classList.add("hidden");
+    });
+  });
 
   backLogContainer.addEventListener("mouseenter", () => {
     // 이미 .move-btn이 있는 경우 중복 생성을 막기 위해 함수 종료
@@ -93,17 +104,15 @@ const initBackLogEvents = ({
 };
 // todo List 생성 버튼
 // addTask 버튼을 누를 시 이벤트 발생
-const clickAddTask = () => {
+const initBackLogButtons = () => {
   const addTaskBtn = document.querySelector(".addTask");
+  const searchBtn = document.querySelector(".searchButton");
 
   addTaskBtn.addEventListener("click", () => {
     createTask();
     choiceImportance();
     addLocalStorage();
   });
-};
-const clickSearchBtn = () => {
-  const searchBtn = document.querySelector(".searchButton");
 
   searchBtn.addEventListener("click", () => {
     const keyword = document.querySelector(".searchBar").value.trim();
@@ -144,9 +153,4 @@ const highlightUrgentTasks = () => {
 
 // backLogContainer에 마우스 hover 이벤트 설정
 
-export {
-  initBackLogEvents,
-  highlightUrgentTasks,
-  clickAddTask,
-  clickSearchBtn,
-};
+export { initBackLogEvents, highlightUrgentTasks, initBackLogButtons };
