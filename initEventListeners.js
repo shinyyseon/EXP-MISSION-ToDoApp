@@ -1,10 +1,4 @@
-import {
-  createTask,
-  sortTodos,
-  backLogList,
-  choiceImportance,
-  today,
-} from "./backlogTask.js";
+import { createTask, sortTodos, backLogList, today } from "./backlogTask.js";
 import { addLocalStorage, todoDelete } from "./script.js";
 import { addEl } from "./element.js";
 
@@ -40,7 +34,6 @@ const initBackLogEvents = ({
     backLogTaskContent.removeAttribute("disabled");
     finishDateContent.removeAttribute("disabled");
     backLogTaskContent.focus();
-    choiceImportance();
   });
   // delete 버튼 클릭 시
   deleteBtn.addEventListener("click", (e) => {
@@ -110,7 +103,6 @@ const initBackLogButtons = () => {
 
   addTaskBtn.addEventListener("click", () => {
     createTask();
-    choiceImportance();
     addLocalStorage();
   });
 

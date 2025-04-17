@@ -65,25 +65,6 @@ const createTask = () => {
   backLogList.prepend(backLogContainer);
 };
 
-const choiceImportance = () => {
-  // 중요도 선택지
-  document.querySelectorAll(".importanceDropdown").forEach((dropdown) => {
-    const selected = dropdown.querySelector(".selected");
-    const options = dropdown.querySelector(".dropdownOptions");
-
-    selected.addEventListener("click", () => {
-      options.classList.toggle("hidden");
-    });
-
-    options.querySelectorAll("li").forEach((option) => {
-      option.addEventListener("click", () => {
-        selected.innerHTML = option.innerHTML;
-        options.classList.add("hidden");
-      });
-    });
-  });
-};
-
 const addBackLogElement = (items) => {
   // backLog 중요도 ( 상 중 하 ) 컨테이너 생성 함수
   const importanceContainer = addEl("div", "importanceDropdown");
@@ -212,11 +193,4 @@ const newElement = (items) => {
   return { backLogContainer };
 };
 
-export {
-  createTask,
-  choiceImportance,
-  newElement,
-  sortTodos,
-  today,
-  backLogList,
-};
+export { createTask, newElement, sortTodos, today, backLogList };
