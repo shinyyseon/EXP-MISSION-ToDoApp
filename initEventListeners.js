@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   toggleCheckbox.addEventListener("change", () => {
     document.body.classList.toggle("dark-mode", toggleCheckbox.checked);
+    highlightUrgentTasks();
   });
 });
 
@@ -118,29 +119,32 @@ const initBackLogButtons = () => {
 // 종료일 마감 임박시 이벤트
 const highlightUrgentTasks = () => {
   const tasks = document.querySelectorAll(".maintaskContainer");
+  const isDarkMode = document.body.classList.contains("dark-mode");
+
+  const today = new Date(); // ← 기존 코드에 없으면 추가
+  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
   tasks.forEach((task) => {
     const dateInput = task.querySelector(".finishDateContent");
     if (dateInput && dateInput.value) {
       const dueDate = new Date(dateInput.value);
-
-      // 시/분/초 제거하여 날짜만 비교
-      const todayOnly = new Date(today);
       const dueOnly = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
 
       const diffTime = dueOnly - todayOnly;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      // 조건에 따라 색상 설정
+      // 색상 설정
       if (diffDays <= 1 && diffDays >= 0) {
-        task.style.backgroundColor = "#ffe0e9"; // 연핑크: 당일 ~ 1일 전
+        task.style.backgroundColor = isDarkMode ? "#663344" : "#ffe0e9"; // 당일~1일
       } else if (diffDays === 2 || diffDays === 3) {
-        task.style.backgroundColor = "#fff7cc"; // 연노랑: 2~3일 전
+        task.style.backgroundColor = isDarkMode ? "#665c33" : "#fff7cc"; // 2~3일
       } else {
         task.style.backgroundColor = ""; // 기본값
       }
     }
   });
 };
+
 
 // backLogContainer에 마우스 hover 이벤트 설정
 
