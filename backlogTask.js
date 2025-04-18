@@ -14,7 +14,7 @@ const today = `${year}-${month}-${day}`;
 // 정렬 부분을 검색 부분과 합침 ( 렌더링 부분 )
 const sortRender = (items) => {
   items.sort((a, b) => {
-    const dateA = new Date(a.date);
+    const dateA = a.date == "" ? new Date(today) : new Date(a.date);
     const dateB = new Date(b.date);
 
     if (dateA.getTime() === dateB.getTime()) {
