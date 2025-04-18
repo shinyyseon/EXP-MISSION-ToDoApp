@@ -5,6 +5,15 @@ import { finishEdit, checkListBody } from './currentTask.js';
 import { toggleSubtask, initSubtaskAddButtons, renderInitialSubTasks } from './subTask.js';
 import { renderCompletedTasks } from './completedTask.js';
 
+// 다크모드
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleCheckbox = document.getElementById("toggle");
+
+  toggleCheckbox.addEventListener("change", () => {
+    document.body.classList.toggle("dark-mode", toggleCheckbox.checked);
+  });
+});
+
 // 초기 이벤트
 const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogContainer, editBtn, deleteBtn, dropdownOptions, selected, label, items }) => {
   // 날짜를 변경 했을 시

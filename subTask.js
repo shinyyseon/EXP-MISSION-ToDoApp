@@ -6,6 +6,7 @@ import { todos } from './script.js';
 const renderInitialSubTasks = () => {
   document.querySelectorAll('.currentTaskWrapper').forEach(wrapper => {
     const container = wrapper.querySelector('.subtaskContainer');
+    container.querySelectorAll('.subtaskItem').forEach(subtask => subtask.remove()); //랜더링 전 기존 요소 삭제 (중복 방지)
     const backlogId = wrapper.dataset.id
     const backlog = todos.find(b => b.id === backlogId);
     if (!backlog) return;
