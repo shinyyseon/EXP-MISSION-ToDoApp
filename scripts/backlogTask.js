@@ -49,7 +49,7 @@ const createTask = () => {
     id: new Date().toISOString(),
     title: "",
     moveCheck: false,
-    complet: false,
+    complete: false,
     // 기본적으로 (하)를 부여 ( 1 = 상, 2 = 중, 3 = 하)
     importance: 3,
     date: "",
