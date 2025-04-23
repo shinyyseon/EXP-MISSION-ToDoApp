@@ -1,16 +1,11 @@
 import { highlightUrgentTasks, initBackLogButtons } from "./initEventListeners.js";
 import { addBackLogElement, backLogList } from "./backlogTask.js";
-import { checkListBody } from './currentTask.js';
-import { renderInitialSubTasks } from './subTask.js';
-import { renderCompletedTasks } from './completedTask.js';
+import { checkListBody } from "./currentTask.js";
+import { renderInitialSubTasks } from "./subTask.js";
+import { renderCompletedTasks } from "./completedTask.js";
 
 let todos = [];
 
-// LocalStorage 생성
-const addLocalStorage = () => {
-  const data = JSON.stringify(todos);
-  localStorage.setItem("todoList", data);
-};
 // localStorage에 List 저장
 const saveToLocalStorage = () => {
   localStorage.setItem("todoList", JSON.stringify(todos));
@@ -36,10 +31,9 @@ const displayTodoList = () => {
   highlightUrgentTasks();
 };
 // initEventListener 에서 import 한 todo는 상수 취급을 하기에 todo 삭제 불가능
-// 해당 scripte
 const todoDelete = (items) => {
   todos = todos.filter((item) => item.id !== items.id);
-  addLocalStorage();
+  saveToLocalStorage();
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -51,9 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
   checkListBody(); // 메인 태스크 렌더링
 
   // subTask.js의 함수
-  renderInitialSubTasks();    // 하위 태스크 그리기
+  renderInitialSubTasks(); // 하위 태스크 그리기
   // completedTask.js의 함수
   renderCompletedTasks(todos);
 });
 
-export { addLocalStorage, todoDelete, todos, saveToLocalStorage };
+export { todoDelete, todos, saveToLocalStorage };

@@ -1,4 +1,4 @@
-import { addLocalStorage, todoDelete, saveToLocalStorage, todos } from "./script.js";
+import { todoDelete, saveToLocalStorage, todos } from "./script.js";
 import { addEl } from "./element.js";
 import { createTask, sortTodos, backLogList, today } from "./backlogTask.js";
 import { finishEdit, checkListBody } from "./currentTask.js";
@@ -22,13 +22,13 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     items.date = e.target.value;
     sortTodos();
     window.dispatchEvent(new CustomEvent("updateChecklist"));
-    addLocalStorage();
+    saveToLocalStorage();
   });
   // 제목을 입력 시
   backLogTaskContent.addEventListener("input", (e) => {
     items.title = e.target.value;
     window.dispatchEvent(new CustomEvent("updateChecklist"));
-    addLocalStorage();
+    saveToLocalStorage();
   });
   // input Element에서 blur 가 발생했을 떄
   backLogTaskContent.addEventListener("blur", (e) => {
@@ -57,8 +57,6 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
       // 중요도 1, 2, 3 에 대해 그때에 해당하는 스타일을 보여주는 삼항 연산자
       items.importance === 1 ? (label.innerText = "상") : items.importance === 2 ? (label.innerText = "중") : (label.innerText = "하");
       sortTodos();
-      highlightUrgentTasks();
-      addLocalStorage();
     });
   });
   selected.addEventListener("click", () => {
@@ -90,7 +88,7 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
       items.moveCheck = !items.moveCheck;
       console.log("moveCheck:", items.moveCheck);
       window.dispatchEvent(new CustomEvent("updateChecklist"));
-      addLocalStorage();
+      saveToLocalStorage();
       renderInitialSubTasks();
     });
 
@@ -113,7 +111,8 @@ const initBackLogButtons = () => {
 
   addTaskBtn.addEventListener("click", () => {
     createTask();
-    addLocalStorage();
+    saveToLocalStorage();
+    console.log(todos);
   });
 
   searchBtn.addEventListener("click", () => {
