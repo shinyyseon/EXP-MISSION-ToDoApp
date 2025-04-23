@@ -17,12 +17,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 초기 이벤트
 const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogContainer, editBtn, deleteBtn, dropdownOptions, selected, label, items }) => {
+  let editing = false;
+
+  // 문서 전체에 클릭 이벤트 리스너 추가
+  document.addEventListener("click", (e) => {
+    // 클릭한 대상이 backLogContainer 내부가 아닌 경우
+    if (editing && !backLogContainer.contains(e.target)) {
+      // finishDateContent와 backLogTaskContent를 disabled로 설정
+      finishDateContent.disabled = true;
+      backLogTaskContent.disabled = true;
+      editing = false;
+    }
+  });
   // 날짜를 변경 했을 시
   finishDateContent.addEventListener("change", (e) => {
     items.date = e.target.value;
-    sortTodos();
     window.dispatchEvent(new CustomEvent("updateChecklist"));
-    saveToLocalStorage();
+    sortTodos();
   });
   // 제목을 입력 시
   backLogTaskContent.addEventListener("input", (e) => {
@@ -30,15 +41,12 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     window.dispatchEvent(new CustomEvent("updateChecklist"));
     saveToLocalStorage();
   });
-  // input Element에서 blur 가 발생했을 떄
-  backLogTaskContent.addEventListener("blur", (e) => {
-    backLogTaskContent.setAttribute("disabled", "");
-  });
   // edit 버튼 클릭 시
   editBtn.addEventListener("click", () => {
     backLogTaskContent.removeAttribute("disabled");
     finishDateContent.removeAttribute("disabled");
     backLogTaskContent.focus();
+    editing = true;
   });
   // delete 버튼 클릭 시
   deleteBtn.addEventListener("click", (e) => {
@@ -102,7 +110,16 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     const btn = backLogContainer.querySelector(".move-btn");
     if (btn) btn.remove();
   });
+  const keyword = document.querySelector(".searchBar");
+
+  keyword.addEventListener("keydown", (e) => {
+    const word = keyword.value.trim();
+    if (e.key == "Enter") {
+      sortTodos(word);
+    }
+  });
 };
+
 // todo List 생성 버튼
 // addTask 버튼을 누를 시 이벤트 발생
 const initBackLogButtons = () => {
