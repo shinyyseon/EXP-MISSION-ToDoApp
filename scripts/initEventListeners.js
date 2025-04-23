@@ -1,9 +1,9 @@
 import { addLocalStorage, todoDelete, saveToLocalStorage, todos } from "./script.js";
 import { addEl } from "./element.js";
 import { createTask, sortTodos, backLogList, today } from "./backlogTask.js";
-import { finishEdit, checkListBody } from './currentTask.js';
-import { toggleSubtask, initSubtaskAddButtons, renderInitialSubTasks } from './subTask.js';
-import { renderCompletedTasks } from './completedTask.js';
+import { finishEdit, checkListBody } from "./currentTask.js";
+import { toggleSubtask, initSubtaskAddButtons, renderInitialSubTasks } from "./subTask.js";
+import { renderCompletedTasks } from "./completedTask.js";
 
 // 다크모드
 document.addEventListener("DOMContentLoaded", () => {
@@ -134,7 +134,9 @@ const highlightUrgentTasks = () => {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       // 색상 설정
-      if (diffDays <= 1 && diffDays >= 0) {
+      if (diffDays < 0) {
+        task.style.backgroundColor = isDarkMode ? "#555555" : "#e0e0e0"; // 마감일 지남 (회색)
+      } else if (diffDays <= 1 && diffDays >= 0) {
         task.style.backgroundColor = isDarkMode ? "#663344" : "#ffe0e9"; // 당일~1일
       } else if (diffDays === 2 || diffDays === 3) {
         task.style.backgroundColor = isDarkMode ? "#665c33" : "#fff7cc"; // 2~3일
@@ -144,9 +146,6 @@ const highlightUrgentTasks = () => {
     }
   });
 };
-
-
-// backLogContainer에 마우스 hover 이벤트 설정
 
 // 체크리스트 본문 이벤트
 const initCurrentTaskEvents = ({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, taskBtnEl, addBtnEl, todo, wrapper }) => {
@@ -176,7 +175,7 @@ const initCurrentTaskEvents = ({ titleSpan, titleInput, dateSpan, dateInput, mod
 
   // + 버튼
   addBtnEl.addEventListener("click", (e) => {
-    const container = wrapper.querySelector('.subtaskContainer');
+    const container = wrapper.querySelector(".subtaskContainer");
     initSubtaskAddButtons(todo.id, container, addBtnEl);
   });
 
@@ -204,33 +203,31 @@ const initCurrentTaskEvents = ({ titleSpan, titleInput, dateSpan, dateInput, mod
   });
 };
 
-
 // 하위 태스크 이벤트
-const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, input}) => {
-
+const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, input }) => {
   // 체크 박스
-  checkbox.addEventListener('change', () => {
+  checkbox.addEventListener("change", () => {
     subTask.check = checkbox.checked;
-    const text = textEl || div.querySelector('.subtaskText');
+    const text = textEl || div.querySelector(".subtaskText");
     if (text) {
-      text.style.textDecoration = checkbox.checked ? 'line-through' : 'none';
-      text.style.opacity = checkbox.checked ? '0.6' : '1';
+      text.style.textDecoration = checkbox.checked ? "line-through" : "none";
+      text.style.opacity = checkbox.checked ? "0.6" : "1";
     }
-    const backlog = todos.find(b => b.id === backlogId);
+    const backlog = todos.find((b) => b.id === backlogId);
     if (!backlog) return;
 
-    const allChecked = backlog.list.every(sub => sub.check === true);
+    const allChecked = backlog.list.every((sub) => sub.check === true);
     backlog.complete = allChecked;
-    if(allChecked)     window.dispatchEvent(new CustomEvent("updateChecklist"));
+    if (allChecked) window.dispatchEvent(new CustomEvent("updateChecklist"));
     renderInitialSubTasks();
     saveToLocalStorage();
   });
 
   // 삭제 버튼
-  delBtn.addEventListener('click', () => {
-    const backlog = todos.find(item => item.id === backlogId);
+  delBtn.addEventListener("click", () => {
+    const backlog = todos.find((item) => item.id === backlogId);
     if (!backlog) return;
-    backlog.list = backlog.list.filter(item => item.id !== subTask.id);
+    backlog.list = backlog.list.filter((item) => item.id !== subTask.id);
     saveToLocalStorage();
     div.remove();
   });
@@ -244,24 +241,24 @@ const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, 
 
       const value = input.value.trim();
       console.log(value);
-       if (!value) {
-         const backlog = todos.find(item => item.id === backlogId);
-         if (backlog) {
-           backlog.list = backlog.list.filter(item => item.id !== subTask.id);
-           saveToLocalStorage();
-         }
-         div.remove();
-         return;
-       }
+      if (!value) {
+        const backlog = todos.find((item) => item.id === backlogId);
+        if (backlog) {
+          backlog.list = backlog.list.filter((item) => item.id !== subTask.id);
+          saveToLocalStorage();
+        }
+        div.remove();
+        return;
+      }
       subTask.text = value;
 
-      const span = document.createElement('span');
-      span.className = 'subtaskText';
+      const span = document.createElement("span");
+      span.className = "subtaskText";
       span.textContent = subTask.text;
 
       if (subTask.check) {
-        span.style.textDecoration = 'line-through';
-        span.style.opacity = '0.6';
+        span.style.textDecoration = "line-through";
+        span.style.opacity = "0.6";
       }
 
       input.replaceWith(span);
@@ -269,12 +266,12 @@ const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, 
       saveToLocalStorage();
     };
 
-    input.addEventListener('keydown', e => e.key === 'Enter' && confirm());
-    input.addEventListener('blur', confirm);
+    input.addEventListener("keydown", (e) => e.key === "Enter" && confirm());
+    input.addEventListener("blur", confirm);
   }
 };
 
-window.addEventListener("updateChecklist", () => {  
+window.addEventListener("updateChecklist", () => {
   checkListBody();
   renderCompletedTasks(todos);
 });
