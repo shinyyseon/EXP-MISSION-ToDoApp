@@ -505,6 +505,7 @@ main {
     gap: 10px; /* 날짜랑 버튼 사이 간격 */
 }
 
+
 .restore,
 .delete {
     border-radius: 6px;
