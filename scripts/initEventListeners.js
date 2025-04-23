@@ -275,7 +275,7 @@ const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, 
 };
 
 //완료 태스크 이벤트 (체크리스트로 복귀)
-const initCompletedTaskEvents = ({ restoreEl, backlogId }) => {
+const completedTaskrestore = ({ restoreEl, backlogId }) => {
   restoreEl.addEventListener('click', () => {
     const backlog = todos.find(b => b.id === backlogId);
     if (!backlog) return;
@@ -289,6 +289,14 @@ const initCompletedTaskEvents = ({ restoreEl, backlogId }) => {
   });
 };
 
+// 완료된 태스크 이벤트
+const initCompletedTaskEvents = ({ item, delBtn }) => {
+  delBtn.addEventListener("click", (e) => {
+      todoDelete(item);
+      renderCompletedTasks(todos);
+  });
+};
+
 
 window.addEventListener("updateChecklist", () => {  
   checkListBody();
@@ -299,5 +307,5 @@ window.addEventListener("updateBackLog", () => {
   sortTodos();
 });
 
-export { initCurrentTaskEvents, initSubTaskEvents, initCompletedTaskEvents };
+export { initCurrentTaskEvents, initSubTaskEvents, completedTaskrestore, initCompletedTaskEvents };
 export { initBackLogEvents, highlightUrgentTasks, initBackLogButtons };
