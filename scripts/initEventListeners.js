@@ -76,13 +76,19 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     // 이미 .move-btn이 있는 경우 중복 생성을 막기 위해 함수 종료
     if (backLogContainer.querySelector(".move-btn")) return;
 
-    // 우선 "이동" 버튼으로 생성
-    const moveBtn = addEl("button", "move-btn", ">>>");
+    // 완료된 항목이면 버튼 생성 안 함
+    if (items.complete) return;
 
+    // ">>>", "<<<" 버튼 생성
+    const isMoved = items.moveCheck;
+    const btnText = isMoved ? "<<<" : ">>>";
+    const moveBtn = addEl("button", "move-btn", items.moveCheck ? "<<<" : ">>>");
+    if (items.moveCheck) moveBtn.classList.add("reverse"); // <<<일 때 클래스 추가
+
+    // ">>>", "<<<" 버튼 클릭 시
     moveBtn.addEventListener("click", () => {
-      // 버튼 클릭 시 moveCheck = true로 변경
-      items.moveCheck = true;
-      console.log("moveCheck:", items);
+      items.moveCheck = !items.moveCheck;
+      console.log("moveCheck:", items.moveCheck);
       window.dispatchEvent(new CustomEvent("updateChecklist"));
       addLocalStorage();
       renderInitialSubTasks();
