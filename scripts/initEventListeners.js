@@ -41,6 +41,9 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     window.dispatchEvent(new CustomEvent("updateChecklist"));
     saveToLocalStorage();
   });
+  backLogTaskContent.addEventListener("blur", () => {
+    backLogTaskContent.setAttribute("disabled", "");
+  });
   // edit 버튼 클릭 시
   editBtn.addEventListener("click", () => {
     backLogTaskContent.removeAttribute("disabled");
