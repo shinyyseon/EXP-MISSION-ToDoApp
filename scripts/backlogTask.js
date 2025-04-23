@@ -1,4 +1,4 @@
-import { todos, addLocalStorage } from "./script.js";
+import { todos, saveToLocalStorage } from "./script.js";
 import { addEl } from "./element.js";
 import { highlightUrgentTasks, initBackLogEvents } from "./initEventListeners.js";
 
@@ -11,10 +11,11 @@ const month = ("0" + (new Date().getMonth() + 1)).slice(-2);
 const day = ("0" + new Date().getDate()).slice(-2);
 const today = `${year}-${month}-${day}`;
 
-// 정렬 부분을 검색 부분과 합침 ( 렌더링 부분 )
-const sortRender = (items) => {
-  items.sort((a, b) => {
-    const dateA = a.date == "" ? new Date(today) : new Date(a.date);
+const sortTodos = (keyword = "") => {
+  const filtered = todos.filter((todo) => !todo.complete && (keyword ? todo.title.includes(keyword) : true));
+
+  filtered.sort((a, b) => {
+    const dateA = a.date === "" ? new Date(today) : new Date(a.date);
     const dateB = new Date(b.date);
 
     if (dateA.getTime() === dateB.getTime()) {
@@ -27,17 +28,11 @@ const sortRender = (items) => {
   });
 
   backLogList.innerHTML = "";
-  items.forEach((todo) => {
+  filtered.forEach((todo) => {
     const { backLogContainer } = addBackLogElement(todo);
     backLogList.appendChild(backLogContainer);
   });
-};
-
-// 정렬 코드
-const sortTodos = (keyword = "") => {
-  const filtered = keyword ? todos.filter((todo) => todo.title.includes(keyword)) : todos;
-  sortRender(filtered);
-  addLocalStorage();
+  saveToLocalStorage();
   highlightUrgentTasks();
 };
 
@@ -114,7 +109,6 @@ const addBackLogElement = (items) => {
   // 정렬 시 새롭게 엘리먼트를 만드는데 만약 title 값이 있다면 변경할 수 없게 만듬
   items.title == "" ? null : backLogTaskContent.setAttribute("disabled", "");
 
-  // 버튼을 만드는
   // 수정 버튼 생성
   const editBtn = addEl("button", "edit", "✎");
   // 삭제 버튼 생성
