@@ -12,7 +12,7 @@ const day = ("0" + new Date().getDate()).slice(-2);
 const today = `${year}-${month}-${day}`;
 
 const sortTodos = (keyword = "") => {
-  const filtered = keyword ? todos.filter((todo) => todo.title.includes(keyword)) : todos;
+  const filtered = todos.filter((todo) => !todo.complete && (keyword ? todo.title.includes(keyword) : true));
 
   filtered.sort((a, b) => {
     const dateA = a.date === "" ? new Date(today) : new Date(a.date);
@@ -109,7 +109,6 @@ const addBackLogElement = (items) => {
   // 정렬 시 새롭게 엘리먼트를 만드는데 만약 title 값이 있다면 변경할 수 없게 만듬
   items.title == "" ? null : backLogTaskContent.setAttribute("disabled", "");
 
-  // 버튼을 만드는
   // 수정 버튼 생성
   const editBtn = addEl("button", "edit", "✎");
   // 삭제 버튼 생성
