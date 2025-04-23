@@ -494,17 +494,20 @@ main {
 
 /* 완료된 태스크 날짜 */
 .completedTaskDate {
+    margin-top : 4px;
     font-size: 12px;
     color: #999;
 }
 
-.dateAndbutton {
+.deleteAndbutton {
     display: flex;
     align-items: center;
     gap: 10px; /* 날짜랑 버튼 사이 간격 */
 }
 
-.restore {
+
+.restore,
+.delete {
     border-radius: 6px;
     border: none;
     padding: 6px 10px;
