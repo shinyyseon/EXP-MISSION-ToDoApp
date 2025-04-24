@@ -27,6 +27,7 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
       finishDateContent.disabled = true;
       backLogTaskContent.disabled = true;
       editing = false;
+      renderInitialSubTasks();
     }
   });
   // 날짜를 변경 했을 시
@@ -211,23 +212,26 @@ export const addBtnEvent = ({ addBtnEl, todo, wrapper }) => {
 // 체크리스트 본문 save 이벤트
 const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo }) => {
 
-  // 외부 클릭 시 저장
-  document.addEventListener("click", (e) => {
+  const clickHandler = (e) => {
     if (isEditing && ![titleInput, dateInput].includes(e.target)) {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      document.removeEventListener("click", clickHandler);
     }
-  });
+  };
 
-  // 엔터 키 클릭 시 저장
+  document.addEventListener("click", clickHandler);
+  
   titleInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      document.removeEventListener("click", clickHandler);
     }
   });
 
   dateInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      document.removeEventListener("click", clickHandler);
     }
   });
 }
