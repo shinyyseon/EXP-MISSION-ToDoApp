@@ -172,11 +172,9 @@ const highlightUrgentTasks = () => {
   });
 };
 
-// 체크리스트 본문 이벤트
-const initCurrentTaskEvents = ({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, taskBtnEl, addBtnEl, todo, wrapper }) => {
+// 체크리스트 본문 - 수정 이벤트
+export const modBtnEvent = ({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, todo }) => {
   let isEditing = false;
-
-  // 수정 버튼
   modBtnEl.addEventListener("click", (e) => {
     e.stopPropagation();
     isEditing = true;
@@ -190,43 +188,49 @@ const initCurrentTaskEvents = ({ titleSpan, titleInput, dateSpan, dateInput, mod
     dateInput.style = "display: inline; padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;";
 
     titleInput.focus();
+    saveEvent({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
   });
+}
 
-  // toggle 버튼
+// 체크리스트 본문 - toggle 버튼 이벤트
+export const taskBtnEvent = ({ taskBtnEl }) => {
   taskBtnEl.addEventListener("click", (e) => {
     e.stopPropagation();
     toggleSubtask(taskBtnEl);
   });
+}
 
-  // + 버튼
+// 체크리스트 본문 - 추가(+) 버튼 이벤트
+export const addBtnEvent = ({ addBtnEl, todo, wrapper }) => {
   addBtnEl.addEventListener("click", (e) => {
     const container = wrapper.querySelector(".subtaskContainer");
     initSubtaskAddButtons(todo.id, container, addBtnEl);
   });
+}
+
+// 체크리스트 본문 save 이벤트
+const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo }) => {
 
   // 외부 클릭 시 저장
   document.addEventListener("click", (e) => {
-    if (isEditing && ![titleInput, dateInput, modBtnEl].includes(e.target)) {
+    if (isEditing && ![titleInput, dateInput].includes(e.target)) {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
-      isEditing = false;
     }
   });
 
-  // 엔터 키 입력 시 저장
+  // 엔터 키 클릭 시 저장
   titleInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
-      isEditing = false;
     }
   });
 
   dateInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
-      isEditing = false;
     }
   });
-};
+}
 
 // 하위 태스크 이벤트
 const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, input }) => {
@@ -331,5 +335,5 @@ window.addEventListener("updateBackLog", () => {
   sortTodos();
 });
 
-export { initCurrentTaskEvents, initSubTaskEvents, completedTaskrestore, initCompletedTaskEvents };
+export { initSubTaskEvents, completedTaskrestore, initCompletedTaskEvents };
 export { initBackLogEvents, highlightUrgentTasks, initBackLogButtons };
