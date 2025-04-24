@@ -112,14 +112,16 @@ body.dark-mode {
 
 /* 버튼 (수정/삭제) */
 .dark-mode .edit,
-.dark-mode .delete {
+.dark-mode .delete,
+.dark-mode .restore {
   background-color: #333;
   color: #ffffff;
   border: 1px solid #555;
 }
 
 .dark-mode .edit:hover,
-.dark-mode .delete:hover {
+.dark-mode .delete:hover,
+.dark-mode .restore:hover {
   background-color: #444;
 }
 

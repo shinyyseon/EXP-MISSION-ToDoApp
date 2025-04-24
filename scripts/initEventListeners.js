@@ -1,9 +1,9 @@
-import { addLocalStorage, todoDelete, saveToLocalStorage, todos } from "./script.js";
+import { todoDelete, saveToLocalStorage, todos } from "./script.js";
 import { addEl } from "./element.js";
 import { createTask, sortTodos, backLogList, today } from "./backlogTask.js";
-import { finishEdit, checkListBody } from './currentTask.js';
-import { toggleSubtask, initSubtaskAddButtons, renderInitialSubTasks } from './subTask.js';
-import { renderCompletedTasks } from './completedTask.js';
+import { finishEdit, checkListBody } from "./currentTask.js";
+import { toggleSubtask, initSubtaskAddButtons, renderInitialSubTasks } from "./subTask.js";
+import { renderCompletedTasks } from "./completedTask.js";
 
 // 다크모드
 document.addEventListener("DOMContentLoaded", () => {
@@ -17,21 +17,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 초기 이벤트
 const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogContainer, editBtn, deleteBtn, dropdownOptions, selected, label, items }) => {
+  let editing = false;
+
+  // 문서 전체에 클릭 이벤트 리스너 추가
+  document.addEventListener("click", (e) => {
+    // 클릭한 대상이 backLogContainer 내부가 아닌 경우
+    if (editing && !backLogContainer.contains(e.target)) {
+      // finishDateContent와 backLogTaskContent를 disabled로 설정
+      finishDateContent.disabled = true;
+      backLogTaskContent.disabled = true;
+      editing = false;
+    }
+  });
   // 날짜를 변경 했을 시
   finishDateContent.addEventListener("change", (e) => {
     items.date = e.target.value;
-    sortTodos();
     window.dispatchEvent(new CustomEvent("updateChecklist"));
-    addLocalStorage();
+    sortTodos();
   });
   // 제목을 입력 시
   backLogTaskContent.addEventListener("input", (e) => {
     items.title = e.target.value;
     window.dispatchEvent(new CustomEvent("updateChecklist"));
-    addLocalStorage();
+    saveToLocalStorage();
   });
-  // input Element에서 blur 가 발생했을 떄
-  backLogTaskContent.addEventListener("blur", (e) => {
+  backLogTaskContent.addEventListener("blur", () => {
     backLogTaskContent.setAttribute("disabled", "");
   });
   // edit 버튼 클릭 시
@@ -39,6 +49,7 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     backLogTaskContent.removeAttribute("disabled");
     finishDateContent.removeAttribute("disabled");
     backLogTaskContent.focus();
+    editing = true;
   });
   // delete 버튼 클릭 시
   deleteBtn.addEventListener("click", (e) => {
@@ -57,8 +68,6 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
       // 중요도 1, 2, 3 에 대해 그때에 해당하는 스타일을 보여주는 삼항 연산자
       items.importance === 1 ? (label.innerText = "상") : items.importance === 2 ? (label.innerText = "중") : (label.innerText = "하");
       sortTodos();
-      highlightUrgentTasks();
-      addLocalStorage();
     });
   });
   selected.addEventListener("click", () => {
@@ -76,15 +85,21 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     // 이미 .move-btn이 있는 경우 중복 생성을 막기 위해 함수 종료
     if (backLogContainer.querySelector(".move-btn")) return;
 
-    // 우선 "이동" 버튼으로 생성
-    const moveBtn = addEl("button", "move-btn", ">>>");
+    // 완료된 항목이면 버튼 생성 안 함
+    if (items.complete) return;
 
+    // ">>>", "<<<" 버튼 생성
+    const isMoved = items.moveCheck;
+    const btnText = isMoved ? "<<<" : ">>>";
+    const moveBtn = addEl("button", "move-btn", items.moveCheck ? "<<<" : ">>>");
+    if (items.moveCheck) moveBtn.classList.add("reverse"); // <<<일 때 클래스 추가
+
+    // ">>>", "<<<" 버튼 클릭 시
     moveBtn.addEventListener("click", () => {
-      // 버튼 클릭 시 moveCheck = true로 변경
-      items.moveCheck = true;
-      console.log("moveCheck:", items);
+      items.moveCheck = !items.moveCheck;
+      console.log("moveCheck:", items.moveCheck);
       window.dispatchEvent(new CustomEvent("updateChecklist"));
-      addLocalStorage();
+      saveToLocalStorage();
       renderInitialSubTasks();
     });
 
@@ -98,7 +113,16 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     const btn = backLogContainer.querySelector(".move-btn");
     if (btn) btn.remove();
   });
+  const keyword = document.querySelector(".searchBar");
+
+  keyword.addEventListener("keydown", (e) => {
+    const word = keyword.value.trim();
+    if (e.key == "Enter") {
+      sortTodos(word);
+    }
+  });
 };
+
 // todo List 생성 버튼
 // addTask 버튼을 누를 시 이벤트 발생
 const initBackLogButtons = () => {
@@ -107,7 +131,8 @@ const initBackLogButtons = () => {
 
   addTaskBtn.addEventListener("click", () => {
     createTask();
-    addLocalStorage();
+    saveToLocalStorage();
+    console.log(todos);
   });
 
   searchBtn.addEventListener("click", () => {
@@ -134,7 +159,9 @@ const highlightUrgentTasks = () => {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       // 색상 설정
-      if (diffDays <= 1 && diffDays >= 0) {
+      if (diffDays < 0) {
+        task.style.backgroundColor = isDarkMode ? "#555555" : "#e0e0e0"; // 마감일 지남 (회색)
+      } else if (diffDays <= 1 && diffDays >= 0) {
         task.style.backgroundColor = isDarkMode ? "#663344" : "#ffe0e9"; // 당일~1일
       } else if (diffDays === 2 || diffDays === 3) {
         task.style.backgroundColor = isDarkMode ? "#665c33" : "#fff7cc"; // 2~3일
@@ -144,9 +171,6 @@ const highlightUrgentTasks = () => {
     }
   });
 };
-
-
-// backLogContainer에 마우스 hover 이벤트 설정
 
 // 체크리스트 본문 이벤트
 const initCurrentTaskEvents = ({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, taskBtnEl, addBtnEl, todo, wrapper }) => {
@@ -176,7 +200,7 @@ const initCurrentTaskEvents = ({ titleSpan, titleInput, dateSpan, dateInput, mod
 
   // + 버튼
   addBtnEl.addEventListener("click", (e) => {
-    const container = wrapper.querySelector('.subtaskContainer');
+    const container = wrapper.querySelector(".subtaskContainer");
     initSubtaskAddButtons(todo.id, container, addBtnEl);
   });
 
@@ -204,33 +228,31 @@ const initCurrentTaskEvents = ({ titleSpan, titleInput, dateSpan, dateInput, mod
   });
 };
 
-
 // 하위 태스크 이벤트
-const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, input}) => {
-
+const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, input }) => {
   // 체크 박스
-  checkbox.addEventListener('change', () => {
+  checkbox.addEventListener("change", () => {
     subTask.check = checkbox.checked;
-    const text = textEl || div.querySelector('.subtaskText');
+    const text = textEl || div.querySelector(".subtaskText");
     if (text) {
-      text.style.textDecoration = checkbox.checked ? 'line-through' : 'none';
-      text.style.opacity = checkbox.checked ? '0.6' : '1';
+      text.style.textDecoration = checkbox.checked ? "line-through" : "none";
+      text.style.opacity = checkbox.checked ? "0.6" : "1";
     }
-    const backlog = todos.find(b => b.id === backlogId);
+    const backlog = todos.find((b) => b.id === backlogId);
     if (!backlog) return;
 
-    const allChecked = backlog.list.every(sub => sub.check === true);
+    const allChecked = backlog.list.every((sub) => sub.check === true);
     backlog.complete = allChecked;
-    if(allChecked)     window.dispatchEvent(new CustomEvent("updateChecklist"));
+    if (allChecked) window.dispatchEvent(new CustomEvent("updateChecklist"));
     renderInitialSubTasks();
     saveToLocalStorage();
   });
 
   // 삭제 버튼
-  delBtn.addEventListener('click', () => {
-    const backlog = todos.find(item => item.id === backlogId);
+  delBtn.addEventListener("click", () => {
+    const backlog = todos.find((item) => item.id === backlogId);
     if (!backlog) return;
-    backlog.list = backlog.list.filter(item => item.id !== subTask.id);
+    backlog.list = backlog.list.filter((item) => item.id !== subTask.id);
     saveToLocalStorage();
     div.remove();
   });
@@ -244,24 +266,24 @@ const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, 
 
       const value = input.value.trim();
       console.log(value);
-       if (!value) {
-         const backlog = todos.find(item => item.id === backlogId);
-         if (backlog) {
-           backlog.list = backlog.list.filter(item => item.id !== subTask.id);
-           saveToLocalStorage();
-         }
-         div.remove();
-         return;
-       }
+      if (!value) {
+        const backlog = todos.find((item) => item.id === backlogId);
+        if (backlog) {
+          backlog.list = backlog.list.filter((item) => item.id !== subTask.id);
+          saveToLocalStorage();
+        }
+        div.remove();
+        return;
+      }
       subTask.text = value;
 
-      const span = document.createElement('span');
-      span.className = 'subtaskText';
+      const span = document.createElement("span");
+      span.className = "subtaskText";
       span.textContent = subTask.text;
 
       if (subTask.check) {
-        span.style.textDecoration = 'line-through';
-        span.style.opacity = '0.6';
+        span.style.textDecoration = "line-through";
+        span.style.opacity = "0.6";
       }
 
       input.replaceWith(span);
@@ -269,12 +291,38 @@ const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, 
       saveToLocalStorage();
     };
 
-    input.addEventListener('keydown', e => e.key === 'Enter' && confirm());
-    input.addEventListener('blur', confirm);
+    input.addEventListener("keydown", (e) => e.key === "Enter" && confirm());
+    input.addEventListener("blur", confirm);
   }
 };
 
-window.addEventListener("updateChecklist", () => {  
+//완료 태스크 이벤트 (체크리스트로 복귀)
+const completedTaskrestore = ({ restoreEl, backlogId }) => {
+
+  restoreEl.addEventListener('click', () => {
+    const backlog = todos.find(b => b.id === backlogId);
+    if (!backlog) return;
+
+    backlog.list.forEach(sub => sub.check = false);
+    backlog.complete = false;
+
+    saveToLocalStorage();
+    window.dispatchEvent(new CustomEvent("updateChecklist"));
+    window.dispatchEvent(new CustomEvent("updateBackLog"));
+    renderInitialSubTasks();
+  });
+};
+
+// 완료된 태스크 이벤트
+const initCompletedTaskEvents = ({ item, delBtn }) => {
+  delBtn.addEventListener("click", (e) => {
+      todoDelete(item);
+      renderCompletedTasks(todos);
+  });
+  window.dispatchEvent(new CustomEvent("updateBackLog"));
+};
+
+window.addEventListener("updateChecklist", () => {
   checkListBody();
   renderCompletedTasks(todos);
 });
@@ -283,5 +331,5 @@ window.addEventListener("updateBackLog", () => {
   sortTodos();
 });
 
-export { initCurrentTaskEvents, initSubTaskEvents };
+export { initCurrentTaskEvents, initSubTaskEvents, completedTaskrestore, initCompletedTaskEvents };
 export { initBackLogEvents, highlightUrgentTasks, initBackLogButtons };

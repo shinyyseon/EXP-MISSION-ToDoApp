@@ -1,4 +1,5 @@
 import { addEl } from "./element.js";
+import { initCompletedTaskEvents, completedTaskrestore } from "./initEventListeners.js"
 
 // 완료된 태스크 아래로 옮기는 함수
 export const renderCompletedTasks = (todos) => {
@@ -14,14 +15,29 @@ export const renderCompletedTasks = (todos) => {
     completed.forEach(item => {
         // div, className 만든다
         const taskItem = addEl("div", "completedTaskItem");
+        const infoDiv = addEl("div", "completedTaskInfo");
         const titleDiv = addEl("div", "completedTaskTitle");
+        const deleteAndButton = addEl("div", "deleteAndbutton");
+        const restoreEl = addEl("button", "restore", "↩︎");
+        const delBtn = addEl("button", "delete", "🗑︎", "", "");
+        completedTaskrestore({ restoreEl, backlogId: item.id });
+
         // 완료된 항목에 하이픈 처리
         titleDiv.innerHTML = `<del>${item.title || "(제목 없음)"}</del>`;
 
         const dateDiv = addEl("div", "completedTaskDate", item.date);
+        infoDiv.appendChild(titleDiv);
+        infoDiv.appendChild(dateDiv);
 
-        taskItem.appendChild(titleDiv);
-        taskItem.appendChild(dateDiv);
+        deleteAndButton.append(delBtn);
+        deleteAndButton.append(restoreEl);
+
+        taskItem.appendChild(infoDiv);
+        taskItem.appendChild(deleteAndButton);
+        
+
         container.appendChild(taskItem);
+
+        initCompletedTaskEvents({ item, delBtn });
     });
 };

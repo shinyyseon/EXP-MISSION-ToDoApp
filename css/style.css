@@ -163,20 +163,48 @@ main {
 }
 /* 추가하는 버튼 */
 .move-btn {
-  all: unset; 
-  position: absolute;
-  right: 11px;
-  transform: translateY(-50%);
-  top: 50%;
-  background: none; 
-  border: none; 
-  padding: 0; 
-  cursor: pointer; 
-  font-size: 24px; 
-  letter-spacing: -6px;
-  color: #0090fe;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3); /* 텍스트에 그림자 추가 */
-  transition: transform 0.3s ease, right 0.3s ease, color 0.3s ease;
+    all: unset;
+    position: absolute;
+    right: 11px;
+    transform: translateY(-50%);
+    top: 50%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 24px;
+    letter-spacing: -6px;
+    color: #0090fe;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3); /* 텍스트에 그림자 추가 */
+    transition:
+        transform 0.3s ease,
+        right 0.3s ease,
+        color 0.3s ease;
+}
+
+.move-btn.reverse {
+    all: unset;
+    position: absolute;
+    right: 11px;
+    transform: translateY(-50%) translateX(10px);
+    top: 50%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 24px;
+    letter-spacing: -6px;
+    color: #0090fe;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3); /* 텍스트에 그림자 추가 */
+    transition:
+        transform 0.3s ease,
+        right 0.3s ease,
+        color 0.3s ease;
+}
+
+.move-btn.reverse:hover {
+    transform: translateY(-50%);
+    right: 17px; /* 왼쪽으로 밀기 */
 }
 
 .move-btn:hover {
@@ -282,7 +310,8 @@ main {
 }
 
 .edit:hover,
-.delete:hover {
+.delete:hover,
+.restore:hover {
     background-color: #d0d0d0;
 }
 
@@ -406,6 +435,7 @@ main {
 .subtaskCheck,
 .subtaskText {
     margin-right: 10px;
+    cursor: pointer;
 }
 
 /* 삭제 버튼 */
@@ -492,6 +522,22 @@ main {
 
 /* 완료된 태스크 날짜 */
 .completedTaskDate {
+    margin-top : 4px;
     font-size: 12px;
     color: #999;
+}
+
+.deleteAndbutton {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 날짜랑 버튼 사이 간격 */
+}
+
+.restore,
+.delete {
+    border-radius: 6px;
+    border: none;
+    padding: 6px 10px;
+    background-color: #e0e0e0;
+    cursor: pointer;
 }
