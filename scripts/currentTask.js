@@ -1,4 +1,4 @@
-import { initCurrentTaskEvents } from './initEventListeners.js';
+import { modBtnEvent, taskBtnEvent, addBtnEvent } from './initEventListeners.js';
 import { addEl } from './element.js';
 import { todos, saveToLocalStorage } from './script.js';
 
@@ -30,19 +30,23 @@ const addCheckListBodyElement = (todo) => {
 
   mainTask.append(titleSpan, titleInput, dateSpan, dateInput);
 
-  const buttons = addEl("div", "taskButtons");
+  const actionBtn = addEl("div", "taskButtons");
   const modBtnEl = addEl("button", "edit", "✎");
   const taskBtnEl = addEl("button", "toggleSubtask", "▼");
 
-  buttons.append(modBtnEl, taskBtnEl);
-  container.append(mainTask, buttons);
+  actionBtn.append(modBtnEl, taskBtnEl);
+  container.append(mainTask, actionBtn);
 
   const subtaskContainer = addEl("div", "subtaskContainer hidden");
   const addBtnEl = addEl("button", "addSubtaskBtn", "+");
   subtaskContainer.appendChild(addBtnEl);
 
   wrapper.append(container, subtaskContainer);
-  initCurrentTaskEvents({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, taskBtnEl, addBtnEl, todo, wrapper });
+
+  // 이벤트 리스너
+  modBtnEvent({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, todo });
+  taskBtnEvent({ taskBtnEl });
+  addBtnEvent({ addBtnEl, todo, wrapper });
 
   return wrapper;
 };

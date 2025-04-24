@@ -1,5 +1,5 @@
 import { highlightUrgentTasks, initBackLogButtons } from "./initEventListeners.js";
-import { addBackLogElement, backLogList, sortTodos } from "./backlogTask.js";
+import { sortTodos } from "./backlogTask.js";
 import { checkListBody } from "./currentTask.js";
 import { renderInitialSubTasks } from "./subTask.js";
 import { renderCompletedTasks } from "./completedTask.js";
