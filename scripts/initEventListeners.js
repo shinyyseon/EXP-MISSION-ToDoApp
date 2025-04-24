@@ -233,8 +233,15 @@ const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo
 }
 
 // 하위 태스크 이벤트
+// 전체 하위 태스크 이벤트 초기화
 const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, input }) => {
-  // 체크 박스
+  checkboxEvent({ div, backlogId, subTask, textEl, checkbox });
+  deleteEvent({ div, backlogId, subTask, delBtn });
+  if (input) inputConfirmEvent({ div, backlogId, subTask, checkbox, delBtn, input });
+};
+
+// 체크박스 이벤트
+const checkboxEvent = ({ div, backlogId, subTask, textEl, checkbox }) => {
   checkbox.addEventListener("change", () => {
     subTask.check = checkbox.checked;
     const text = textEl || div.querySelector(".subtaskText");
@@ -242,62 +249,68 @@ const initSubTaskEvents = ({ div, backlogId, subTask, textEl, checkbox, delBtn, 
       text.style.textDecoration = checkbox.checked ? "line-through" : "none";
       text.style.opacity = checkbox.checked ? "0.6" : "1";
     }
-    const backlog = todos.find((b) => b.id === backlogId);
+
+    const backlog = todos.find(b => b.id === backlogId);
     if (!backlog) return;
 
-    const allChecked = backlog.list.every((sub) => sub.check === true);
+    const allChecked = backlog.list.every(sub => sub.check === true);
     backlog.complete = allChecked;
     if (allChecked) window.dispatchEvent(new CustomEvent("updateChecklist"));
+
     renderInitialSubTasks();
     saveToLocalStorage();
   });
+};
 
-  // 삭제 버튼
+// 삭제 버튼 이벤트
+const deleteEvent = ({ div, backlogId, subTask, delBtn }) => {
   delBtn.addEventListener("click", () => {
-    const backlog = todos.find((item) => item.id === backlogId);
+    const backlog = todos.find(item => item.id === backlogId);
     if (!backlog) return;
-    backlog.list = backlog.list.filter((item) => item.id !== subTask.id);
+
+    backlog.list = backlog.list.filter(item => item.id !== subTask.id);
     saveToLocalStorage();
     div.remove();
   });
+};
 
-  // 입력 완료 후 변환
-  if (input) {
-    let isConfirmed = false;
-    const confirm = () => {
-      if (isConfirmed) return;
-      isConfirmed = true;
+// 입력 확인 이벤트
+const inputConfirmEvent = ({ div, backlogId, subTask, checkbox, delBtn, input }) => {
+  let isConfirmed = false;
 
-      const value = input.value.trim();
-      console.log(value);
-      if (!value) {
-        const backlog = todos.find((item) => item.id === backlogId);
-        if (backlog) {
-          backlog.list = backlog.list.filter((item) => item.id !== subTask.id);
-          saveToLocalStorage();
-        }
-        div.remove();
-        return;
+  const confirm = () => {
+    if (isConfirmed) return;
+    isConfirmed = true;
+    const value = input.value.trim();
+
+    if (!value) {
+      const backlog = todos.find(item => item.id === backlogId);
+      if (backlog) {
+        backlog.list = backlog.list.filter(item => item.id !== subTask.id);
+        saveToLocalStorage();
       }
-      subTask.text = value;
+      div.remove();
+      return;
+    }
 
-      const span = document.createElement("span");
-      span.className = "subtaskText";
-      span.textContent = subTask.text;
+    subTask.text = value;
 
-      if (subTask.check) {
-        span.style.textDecoration = "line-through";
-        span.style.opacity = "0.6";
-      }
+    const span = document.createElement("span");
+    span.className = "subtaskText";
+    span.textContent = subTask.text;
 
-      input.replaceWith(span);
-      initSubTaskEvents({ div, backlogId, subTask, textEl: span, checkbox, delBtn, input: null });
-      saveToLocalStorage();
-    };
+    if (subTask.check) {
+      span.style.textDecoration = "line-through";
+      span.style.opacity = "0.6";
+    }
 
-    input.addEventListener("keydown", (e) => e.key === "Enter" && confirm());
-    input.addEventListener("blur", confirm);
-  }
+    input.replaceWith(span);
+    initSubTaskEvents({ div, backlogId, subTask, textEl: span, checkbox, delBtn, input: null });
+    saveToLocalStorage();
+  };
+
+  input.addEventListener("keydown", e => e.key === "Enter" && confirm());
+  input.addEventListener("blur", confirm);
 };
 
 //완료 태스크 이벤트 (체크리스트로 복귀)
