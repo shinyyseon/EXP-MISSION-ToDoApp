@@ -17,20 +17,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 전체 백로그 이벤트 초기화
 const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogContainer, editBtn, deleteBtn, dropdownOptions, selected, label, items }) => {
-  let editing = false;
+  let state = { editing: false };
 
   document.addEventListener("click", (e) => {
     // 클릭한 대상이 backLogContainer 내부가 아닌 경우
-    if (editing && !backLogContainer.contains(e.target)) {
+    if (state.editing && !backLogContainer.contains(e.target)) {
       // finishDateContent와 backLogTaskContent를 disabled로 설정
       finishDateContent.disabled = true;
       backLogTaskContent.disabled = true;
-      editing = false;
+      state.editing = false;
       renderInitialSubTasks();
     }
   });
 
-  editBtnEvent({ editing, finishDateContent, backLogTaskContent, editBtn, items });
+  editBtnEvent({ state, finishDateContent, backLogTaskContent, editBtn, items });
   deleteBtnEvent({ backLogContainer, deleteBtn, items });
   selectedEvent({ selected, dropdownOptions, label, items });
   arrowEvent({ backLogContainer, items });
@@ -38,24 +38,17 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
 };
 
 // 백로그 이벤트 - edit 버튼 이벤트
-const editBtnEvent = ({ editing, finishDateContent, backLogTaskContent, editBtn, items }) => {
+const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, items }) => {
   editBtn.addEventListener("click", () => {
     backLogTaskContent.removeAttribute("disabled");
     finishDateContent.removeAttribute("disabled");
     backLogTaskContent.focus();
-    editing = true;
+    state.editing = true;
   });
 
   // 날짜를 변경 했을 시
   finishDateContent.addEventListener("change", (e) => {
-    const currentDate = e.target.value;
-
-    if (items.date === currentDate) {
-      e.target.disabled = true;
-    } else {
-      e.target.disabled = false;
-    }
-    items.date = currentDate;
+    items.date = e.target.value;
     window.dispatchEvent(new CustomEvent("updateChecklist"));
     sortTodos();
   });
@@ -66,12 +59,12 @@ const editBtnEvent = ({ editing, finishDateContent, backLogTaskContent, editBtn,
     saveToLocalStorage();
   });
   backLogTaskContent.addEventListener("keydown", (e) => {
-    e.key == "Enter" ? backLogTaskContent.setAttribute("disabled", "") : "";
+    e.key == "Enter" ? (e.target.disabled = true) : "";
     saveToLocalStorage();
   });
 
   backLogTaskContent.addEventListener("blur", () => {
-    backLogTaskContent.setAttribute("disabled", "");
+    backLogTaskContent.disabled = items.title === "" ? false : true;
     window.dispatchEvent(new CustomEvent("updateChecklist"));
   });
 };
