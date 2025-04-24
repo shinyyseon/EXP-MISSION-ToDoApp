@@ -1,6 +1,6 @@
 import { todoDelete, saveToLocalStorage, todos } from "./script.js";
 import { addEl } from "./element.js";
-import { createTask, sortTodos, backLogList, today } from "./backlogTask.js";
+import { createTask, sortTodos, backLogList } from "./backlogTask.js";
 import { finishEdit, checkListBody } from "./currentTask.js";
 import { toggleSubtask, initSubtaskAddButtons, renderInitialSubTasks } from "./subTask.js";
 import { renderCompletedTasks } from "./completedTask.js";
@@ -30,7 +30,7 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
     }
   });
 
-  editBtnEvent({ editing, finishDateContent, backLogTaskContent, backLogContainer, editBtn, items });
+  editBtnEvent({ editing, finishDateContent, backLogTaskContent, editBtn, items });
   deleteBtnEvent({ backLogContainer, deleteBtn, items });
   selectedEvent({ selected, dropdownOptions, label, items });
   arrowEvent({ backLogContainer, items });
@@ -39,7 +39,7 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
 
 
 // 백로그 이벤트 - edit 버튼 이벤트
-const editBtnEvent = ({ editing, finishDateContent, backLogTaskContent, backLogContainer, editBtn, items }) => {
+const editBtnEvent = ({ editing, finishDateContent, backLogTaskContent, editBtn, items }) => {
   editBtn.addEventListener("click", () => {
     backLogTaskContent.removeAttribute("disabled");
     finishDateContent.removeAttribute("disabled");
