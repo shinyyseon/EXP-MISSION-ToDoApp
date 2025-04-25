@@ -89,9 +89,11 @@
              
               - 완료된 태스크
                  - completedTaskrestore() : 완료된 태스크 -> 체크리스트 복귀 이벤트
-                 - initCompletedTaskEvents() : 완료된 태스크 삭제 이벤트
+                 - ```javascript initCompletedTaskEvents()``` : 완료된 태스크 삭제 이벤트
 
-               
+---
+   - 로컬스토리지 사용
+   - ```javascript
 
 
 
