@@ -1,0 +1,486 @@
+/* -------------------- 전체 초기화 -------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+  height: 100vh;
+  /* overflow: hidden;  */
+  background-color: #f0f0f0;
+}
+
+
+/* -------------------- 헤더 영역 -------------------- */
+.header {
+  position: relative;
+  height: 60px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* 다크모드 토글 스위치 */
+.toggleSwitch {
+  width: 50px;
+  height: 25px;
+  display: block;
+  position: absolute;
+  border-radius: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px 2px rgba(0 0 0 / 10%);
+  cursor: pointer;
+  top: 15px;
+  left: 15px;
+}
+
+.toggleSwitch .toggleButton {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #0090FE;
+  transition: all 0.2s ease-in;
+}
+
+
+/* 다크모드가 켜졌을 때 토글버튼 스타일 */
+#toggle:checked ~ .toggleSwitch {
+  background: #0090FE;
+}
+
+#toggle:checked ~ .toggleSwitch .toggleButton {
+  left: calc(100% - 23px);
+  background: #fff;
+}
+
+/* 다크모드 토글 버튼 전환 효과 */
+.toggleSwitch, .toggleButton {
+  transition: all 0.2s ease-in;
+}
+
+
+/* 접기/펼치기 */
+.hidden {
+  display: none;
+}
+
+/* -------------------- 메인 레이아웃 -------------------- */
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 10px;
+  padding: 20px;
+  height: calc(100vh - 60px); 
+  box-sizing: border-box;
+}
+
+/* -------------------- 백로그 영역 -------------------- */
+.backLog {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 600px;
+  overflow: hidden;
+}
+
+/* 백로그 헤더 제목 */
+.sectionTitle {
+  margin-top: 8px;
+  font-size: larger;
+  margin-bottom: 10px;
+}
+
+/* 검색 및 추가 버튼 포함 헤더 */
+.backlogHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px 10px;
+}
+
+/* 고정되는 타이틀 + hr */
+.backlogFixedHeader {
+  flex-shrink: 0;
+  background-color: #f9f9f9;
+  z-index: 1;
+}
+
+/* 스크롤되는  영역 */
+.backlogScrollArea {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding: 10px;
+}
+
+
+/* 검색창 */
+.searchBar {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* 검색 버튼 */
+.searchButton {
+  margin-left: 0;
+}
+
+/* 검색 및 추가 버튼 */
+.searchButton,
+.addTask {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  background-color: #0090FE;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.searchButton:hover,
+.addTask:hover {
+  background-color: #0064b1;
+}
+
+/* 백로그 태스크 생성 부분 */
+.taskContainer {
+  margin-top: 5px;
+}
+
+/* -------------------- 메인 태스크 박스 -------------------- */
+.maintaskContainer {
+  display: flex;
+  flex-wrap: wrap; 
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+}
+
+/* 태스크 입력창 */
+.taskContent {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* -------------------- 중요도 드롭다운 -------------------- */
+.importanceDropdown {
+  position: relative;
+  width: 100px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.importanceDropdown .selected,
+.dropdownOptions li {
+  display: flex;
+  align-items: center;
+  gap: 4px; 
+  padding: 6px 8px;
+}
+
+/* 중요도 컬러 원형 */
+.circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px; 
+  vertical-align: middle;
+}
+
+.high {
+  background-color: red;
+}
+.medium {
+  background-color: orange;
+}
+.low {
+  background-color: green;
+}
+
+/* 드롭다운 리스트 */
+.dropdownOptions {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  position: absolute;
+  background: white;
+  z-index: 1000;
+}
+
+.dropdownOptions li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 8px; 
+  cursor: pointer;
+}
+
+.dropdownOptions li:hover {
+  background-color: #e0e0e0;
+}
+
+
+/* -------------------- 버튼 (수정, 삭제) -------------------- */
+.edit,
+.delete {
+  width: 40px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.edit:hover,
+.delete:hover {
+  background-color: #d0d0d0;
+}
+
+/* 종료일 입력창 */
+.finishDateContainer {
+  width: 100%; 
+  margin-top: 4px;
+}
+
+.finishDateContent {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 200px;
+}
+
+
+/* -------------------- 현재 로그 태스크 영역 -------------------- */
+.current {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+}
+
+/* 고정되는 헤더 (타이틀 + hr) */
+.currentHeader {
+  position: sticky;
+  top: 0;
+  background-color: #f9f9f9;
+  z-index: 10;
+  padding: 10px;
+  flex-shrink: 0; /* 고정 크기 유지 */
+}
+
+
+/* 이 부분에만 스크롤 */
+.currentScrollArea {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding: 10px;
+}
+
+/* 현재 태스크 컨테이너 */
+.currentTaskContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  gap: 10px;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
+}
+
+/* 메인  현재 태스크 예시 정보 */
+.mainTaskEx {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mainTaskName {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.taskDueDate {
+  font-size: 12px;
+  color: #888;
+}
+
+/* edit 버튼 및 toggle 버튼 */
+.taskButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.edit,
+.toggleSubtask {
+  width: 40px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.edit:hover,
+.toggleSubtask:hover {
+  background-color: #d0d0d0;
+}
+
+/* -------------------- 하위 태스크 -------------------- */
+.subtaskContainer {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
+/* 개별 하위 태스크 아이템 */
+.subtaskItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  padding: 8px 10px;
+  border: 1px dashed #bbb; /* 작성 가이드 선 */
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+/* 텍스트와 체크박스 그룹 */
+.subtaskCheck,
+.subtaskText {
+  margin-right: 10px;
+}
+
+/* 삭제 버튼 */
+.subtaskDelete {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.subtaskDelete:hover {
+  background-color: #d0d0d0;
+}
+
+/* 추가 버튼 */
+.addSubtaskBtn {
+  display: block;
+  width: 32px;
+  margin: 10px auto 0 auto;
+  padding: 4px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #0090FE;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: center;
+}
+
+.addSubtaskBtn:hover {
+  background-color: #0064b1;
+}
+
+/* 하위태스크 접기 펼치기 */
+.hidden {
+  display: none;
+}
+
+/* -------------------- 완료된 태스크 -------------------- */
+.complete {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #e9e9e9;
+  height: 200px; 
+  overflow: hidden; 
+}
+
+/* 완료된 태스크 아이템 컨테이너 */
+.completedTaskContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  max-height: 150px; 
+  overflow-y: auto;  
+  padding-right: 5px;  
+  padding-bottom: 20px; 
+}
+
+/* 개별 완료된 태스크 아이템 */
+.completedTaskItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  font-size: 14px;
+}
+
+/* 완료된 태스크 제목 */
+.completedTaskTitle {
+  font-weight: 600;
+  color: #555;
+}
+
+/* 완료된 태스크 날짜 */
+.completedTaskDate {
+  font-size: 12px;
+  color: #999;
+}
