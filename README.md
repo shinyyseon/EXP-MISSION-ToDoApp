@@ -35,68 +35,132 @@
             - darkMode.css : 다크모드 기능을 위한 css 파일
          3. scripts : Javascript 파일 패키지
             - backlogTask.js : 백로그 데이터 셋 생성, 리스트 정렬, 검색, CRUD 기능을 포함한 기능의 js 파일
-               - sortTodos() : 백로그 리스트 정렬 함수
-               - createTask() : 새로운 태스크 데이터 생성 함수
-               - addBackLogElement() : 백로그 요소 생성 함수
+               - ```sortTodos()``` : 백로그 리스트 정렬 함수
+               - ```createTask()``` : 새로운 태스크 데이터 생성 함수
+               - ```addBackLogElement()``` : 백로그 요소 생성 함수
 
             - completedTask.js : 완료된 태스크 처리 js 파일
-               - renderCompletedTasks() : 완료된 태스크 처리 함수
+               - ```renderCompletedTasks()``` : 완료된 태스크 처리 함수
 
             - currentTask.js : 백로그를 통해 넘어온 데이터 기반 체크리스트 본문 CRUD 및 정렬 기능 js 파일
-               - checkListBody() : 체크리스트 본문 랜더링 및 정렬 기능 함수
-               - addCheckListBodyElement() : 체크리스트 요소 생성 함수
-               - finishEdit() : 체크리스트 본문 수정 처리 함수
+               - ```checkListBody()``` : 체크리스트 본문 랜더링 및 정렬 기능 함수
+               - ```addCheckListBodyElement()``` : 체크리스트 요소 생성 함수
+               - ```finishEdit()``` : 체크리스트 본문 수정 처리 함수
                   
             - script.js : 로컬스토리지 활용, 데이터 삭제 함수 등 데이터 및 최소 실행 작업에 대한 js 파일
-               - saveToLocalStorage() : 로컬 스토리지 저장 함수
-               - loadLocalStorage() : 로컬 스토리지 load 함수
-               - displayTodoList() : 초기 실행 시 로컬 스토리지 데이터 기반 UI 송출
-               - todoDelete() : 데이터 삭제 함수
+               - ```saveToLocalStorage()``` : 로컬 스토리지 저장 함수
+               - ```loadLocalStorage()``` : 로컬 스토리지 load 함수
+               - ```displayTodoList()``` : 초기 실행 시 로컬 스토리지 데이터 기반 UI 송출
+               - ```todoDelete()``` : 데이터 삭제 함수
                   
             - subTask.js : 체크리스트 본문의 각 데이터의 하위 태스크 CRUD 기능 js 파일
-               - renderInitialSubTasks() : 전체 하위 태스크 초기 랜더링 함수
-               - renderSubTaskWrapper() : html wrapper에 대한 하위 태스크 랜더링 함수
-               - clearSubTaskEl() : 하위 태스크 요소 전체 삭제 함수
-               - findBacklogId() : 백로그 ID 찾기 함수
-               - insertSubTaskAddButton() : 하위 태스크 요소 삽입 함수
-               - createSubTaskElement() : 하위 태스크 요소 생성 함수
-               - initSubtaskAddButtons() : 하위 태스크 버튼 이벤트 연결 함수
-               - toggleSubtask() : 체크리스트 본문 토글 버튼 연결
+               - ```renderInitialSubTasks()``` : 전체 하위 태스크 초기 랜더링 함수
+               - ```renderSubTaskWrapper()``` : html wrapper에 대한 하위 태스크 랜더링 함수
+               - ```clearSubTaskEl()``` : 하위 태스크 요소 전체 삭제 함수
+               - ```findBacklogId()``` : 백로그 ID 찾기 함수
+               - ```insertSubTaskAddButton()``` : 하위 태스크 요소 삽입 함수
+               - ```createSubTaskElement()``` : 하위 태스크 요소 생성 함수
+               - ```initSubtaskAddButtons()``` : 하위 태스크 버튼 이벤트 연결 함수
+               - ```toggleSubtask()``` : 체크리스트 본문 토글 버튼 연결
 
             - element.js : html element 생성 js 파일
             - initEventListeners.js : 각 파일의 이벤트 관리 js 파일 
                - 백로그 
-                  - initBackLogEvents() : 전체 백로그 초기화 이벤트
-                  - editBtnEvent() : 수정 버튼 이벤트
-                  - deleteBtnEvent() : 삭제 버튼 이벤트
-                  - selectedEvent() : 중요도 변경 이벤트
-                  - arrowEvent() : 백로그 <-> 체크리스트 이동 화살표 버튼 이벤트
-                  - searchBtnEvent() : 검색 기능 이벤트
-                  - initBackLogButtons() : 새로운 백로그 생성 이벤트 (데이터 생성)
-                  - highlightUrgentTasks() : 종료일 마감 임박 이벤트
+                  - ```initBackLogEvents()``` : 전체 백로그 초기화 이벤트
+                  - ```editBtnEvent()``` : 수정 버튼 이벤트
+                  - ```deleteBtnEvent()``` : 삭제 버튼 이벤트
+                  - ```selectedEvent()``` : 중요도 변경 이벤트
+                  - ```arrowEvent()``` : 백로그 <-> 체크리스트 이동 화살표 버튼 이벤트
+                  - ```searchBtnEvent()``` : 검색 기능 이벤트
+                  - ```initBackLogButtons()``` : 새로운 백로그 생성 이벤트 (데이터 생성)
+                  - ```highlightUrgentTasks()``` : 종료일 마감 임박 이벤트
                     
                - 체크리스트
-                  - modBtnEvent() ; 수정 버튼 이벤트
-                  - taskBtnEvent() : 하위 태스크 토글 버튼 이벤트
-                  - addBtnEvent() : 하위 태스크 추가 버튼 이벤트
-                  - saveEvent() : 수정 후 저장 이벤트
+                  - ```modBtnEvent()``` ; 수정 버튼 이벤트
+                  - ```taskBtnEvent()``` : 하위 태스크 토글 버튼 이벤트
+                  - ```addBtnEvent()``` : 하위 태스크 추가 버튼 이벤트
+                  - ```saveEvent()``` : 수정 후 저장 이벤트
 
               - 하위 태스크
-                 - initSubTaskEvents() : 전체 하위 태스크 이벤트 초기화
-                 - checkboxEvent() : 체크박스 이벤트
-                 - deleteEvent() : 삭제 버튼 이벤트
-                 - inputConfirmEvent() : 하위 태스크 입력 확인 이벤트
+                 - ```initSubTaskEvents()``` : 전체 하위 태스크 이벤트 초기화
+                 - ```checkboxEvent()``` : 체크박스 이벤트
+                 - ```deleteEvent()``` : 삭제 버튼 이벤트
+                 - ```inputConfirmEvent()``` : 하위 태스크 입력 확인 이벤트
              
               - 완료된 태스크
-                 - completedTaskrestore() : 완료된 태스크 -> 체크리스트 복귀 이벤트
-                 - ```javascript
-                   initCompletedTaskEvents()
-                   ```
-                   : 완료된 태스크 삭제 이벤트
+                 - ```completedTaskrestore()``` : 완료된 태스크 -> 체크리스트 복귀 이벤트
+                 - ```initCompletedTaskEvents()``` : 완료된 태스크 삭제 이벤트
 
 ---
-   - 로컬스토리지 사용
-   - ```javascript
+   - <details> <summary>로컬 스토리지 사용</summary>
+   ```javascript
+   // localStorage에 List 저장
+   const saveToLocalStorage = () => {
+     localStorage.setItem("todoList", JSON.stringify(todos));
+   };
+   
+   // 리로드 했을 시 localStorage에 todoList 가 있다면 불러와서 JSON 형태로 만든 후 todos 에 초기화
+   const loadLocalStorage = () => {
+     const data = localStorage.getItem("todoList");
+     console.log(JSON.parse(data));
+     if (data) {
+       todos = JSON.parse(data);
+     }
+   };
+   
+   // 처음 로드 되었을 때 localStorage 를 확인 후 있다면 todoList를 생성
+   const displayTodoList = () => {
+     loadLocalStorage();
+     sortTodos();
+     highlightUrgentTasks();
+   };
+   ```
+   </details>
+
+   - 백로그 정렬 함수
+   ```javascript
+   const sortTodos = (keyword = "") => {
+     const filtered = todos.filter((todo) => !todo.complete && (keyword ? todo.title.includes(keyword) : true));
+     filtered.sort((a, b) => {
+       // 날짜가 없는지 여부 확인 (빈 문자열 혹은 falsy 값인 경우)
+       const noDateA = !a.date || a.date === "";
+       const noDateB = !b.date || b.date === "";
+   
+       // 한쪽만 날짜가 없으면, 날짜가 없는 항목이 앞에 오도록 함
+       if (noDateA && !noDateB) {
+         return -1; // a가 b보다 앞에 오도록 함
+       } else if (!noDateA && noDateB) {
+         return 1; // b가 a보다 앞에 오도록 함
+       } else {
+         // 둘 다 날짜가 있는 경우: 날짜를 비교하여 정렬
+         const dateA = new Date(a.date);
+         const dateB = new Date(b.date);
+   
+         if (dateA.getTime() === dateB.getTime()) {
+           // 날짜가 같으면 importance 값을 비교
+           return a.importance - b.importance;
+         } else {
+           // 날짜를 기준으로 정렬
+           return dateA - dateB;
+         }
+       }
+     });
+   
+     backLogList.innerHTML = "";
+     filtered.forEach((todo) => {
+       const { backLogContainer } = addBackLogElement(todo);
+       backLogList.appendChild(backLogContainer);
+     });
+     saveToLocalStorage();
+     highlightUrgentTasks();
+   };
+   ```
+
+   - 백로그 CRUD 함수
+   - 체크리스트 본문
+     
+   - 완료 태스크
+     
 
 
 
