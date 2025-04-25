@@ -4,12 +4,11 @@ import { todos } from "./script.js";
 
 // 렌더링
 const renderInitialSubTasks = () => {
-  document.querySelectorAll(".currentTaskWrapper").forEach(wrapper => {
+  document.querySelectorAll(".currentTaskWrapper").forEach((wrapper) => {
     const backlogId = wrapper.dataset.id;
     const container = wrapper.querySelector(".subtaskContainer");
     renderSubTaskWrapper(backlogId, container);
   });
-  sortTodos();
 };
 
 // 특정 Wrapper에 대해 하위 태스크 렌더링
@@ -18,9 +17,9 @@ export const renderSubTaskWrapper = (backlogId, container) => {
 
   const backlog = findBacklogId(backlogId);
   console.log(backlog);
-  if(!backlog) return;
+  if (!backlog) return;
 
-  backlog.list.forEach(subTask => {
+  backlog.list.forEach((subTask) => {
     const taskEl = createSubTaskElement(backlogId, subTask);
     insertSubTaskAddButton(container, taskEl);
   });
@@ -29,11 +28,11 @@ export const renderSubTaskWrapper = (backlogId, container) => {
 // 하위 태스크 요소 전체 삭제
 const clearSubTaskEl = (container) => {
   if (!container) return;
-  container.querySelectorAll(".subtaskItem").forEach(el => el.remove());
+  container.querySelectorAll(".subtaskItem").forEach((el) => el.remove());
 };
 
 // ID로 백로그 찾기
-const findBacklogId = (id) => todos.find(b => b.id === id);
+const findBacklogId = (id) => todos.find((b) => b.id === id);
 
 // 하위 태스크 요소 삽입
 const insertSubTaskAddButton = (container, element) => {
@@ -75,7 +74,6 @@ const createSubTaskElement = (backlogId, subTask, editable = false) => {
   initSubTaskEvents({ div, backlogId, subTask, textSpan, checkbox, delBtn, input });
   return div;
 };
-
 
 // 버튼 이벤트 연결
 const initSubtaskAddButtons = (backlogId, container, addBtn) => {
