@@ -1,43 +1,79 @@
-import { addEl } from "./element.js";
-import { initCompletedTaskEvents, completedTaskrestore } from "./initEventListeners.js"
+import { modBtnEvent, taskBtnEvent, addBtnEvent } from './initEventListeners.js';
+import { addEl } from './element.js';
+import { todos, saveToLocalStorage } from './script.js';
 
-// 완료된 태스크 아래로 옮기는 함수
-export const renderCompletedTasks = (todos) => {
-    // .completedTaskContainer라는 클래스를 가진 요소를 찾아서 container 변수에 저장
-    const container = document.querySelector(".completedTaskContainer");
-    // 중복 생성 방지를 위해 화면 초기화
-    container.innerHTML = "";
+const checkList = document.querySelector(".currentScrollArea");
 
-    // complete: true인 항목을 completed 베열에 넣기
-    const completed = todos.filter(item => item.complete);
-
-    // 배열을 하나씩 순회하면서 item이라는 이름으로 꺼내옴
-    completed.forEach(item => {
-        // div, className 만든다
-        const taskItem = addEl("div", "completedTaskItem");
-        const infoDiv = addEl("div", "completedTaskInfo");
-        const titleDiv = addEl("div", "completedTaskTitle");
-        const deleteAndButton = addEl("div", "deleteAndbutton");
-        const restoreEl = addEl("button", "restore", "↩︎");
-        const delBtn = addEl("button", "delete", "🗑︎", "", "");
-        completedTaskrestore({ restoreEl, backlogId: item.id });
-
-        // 완료된 항목에 하이픈 처리
-        titleDiv.innerHTML = `<del>${item.title || "(제목 없음)"}</del>`;
-
-        const dateDiv = addEl("div", "completedTaskDate", item.date);
-        infoDiv.appendChild(titleDiv);
-        infoDiv.appendChild(dateDiv);
-
-        deleteAndButton.append(delBtn);
-        deleteAndButton.append(restoreEl);
-
-        taskItem.appendChild(infoDiv);
-        taskItem.appendChild(deleteAndButton);
-        
-
-        container.appendChild(taskItem);
-
-        initCompletedTaskEvents({ item, delBtn });
-    });
+// 렌더링
+const checkListBody = () => {
+    checkList.innerHTML = "";
+    todos
+        .filter(todo => todo.moveCheck && !todo.complete)
+        .sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                if (dateA < dateB) return -1;
+                if (dateA > dateB) return 1;
+                return a.importance - b.importance;
+            })
+        .forEach(todo => checkList.appendChild(addCheckListBodyElement(todo)));
 };
+
+// body 요소 그리기
+const addCheckListBodyElement = (todo) => {
+
+    const wrapper = addEl("div", "currentTaskWrapper");
+    wrapper.dataset.id = todo.id;
+
+    const container = addEl("div", "currentTaskContainer");
+    const mainTask = addEl("div", "mainTaskEx");
+
+    // 제목과 date 요소 기본 text와 input 두개 생성
+    const titleSpan = addEl("span", "mainTaskName", todo.title);
+    const titleInput = addEl("input", "", "", todo.title, "text", "", "none");
+
+    const dateSpan = addEl("span", "taskDueDate", todo.date);
+    const dateInput = addEl("input", "", "", todo.date, "date", "", "none");
+
+    mainTask.append(titleSpan, titleInput, dateSpan, dateInput);
+
+    const actionBtn = addEl("div", "taskButtons");
+    const modBtnEl = addEl("button", "edit", "✎");
+    const taskBtnEl = addEl("button", "toggleSubtask", "▼");
+
+    actionBtn.append(modBtnEl, taskBtnEl);
+    container.append(mainTask, actionBtn);
+
+    const subtaskContainer = addEl("div", "subtaskContainer hidden");
+    const addBtnEl = addEl("button", "addSubtaskBtn", "+");
+    subtaskContainer.appendChild(addBtnEl);
+
+    wrapper.append(container, subtaskContainer);
+
+    // 이벤트 리스너
+    modBtnEvent({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, todo });
+    taskBtnEvent({ taskBtnEl });
+    addBtnEvent({ addBtnEl, todo, wrapper });
+
+    return wrapper;
+    };
+
+    // 수정 완료시 적용
+    const finishEdit = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo }) => {
+    if (!isEditing) return;
+
+    titleSpan.innerText = titleInput.value;
+    dateSpan.innerText = dateInput.value;
+
+    titleInput.style.display = "none";
+    dateInput.style.display = "none";
+    titleSpan.style.display = "inline";
+    dateSpan.style.display = "inline";
+
+    todo.title = titleInput.value;
+    todo.date = dateInput.value;
+    window.dispatchEvent(new CustomEvent("updateBackLog"));
+    saveToLocalStorage();
+};
+
+export { checkListBody, finishEdit, todos };
