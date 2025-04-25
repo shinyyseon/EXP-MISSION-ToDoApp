@@ -1,134 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Todo list</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="darkMode.css" />
-    <script src="script.js" defer></script>
-  </head>
-  <body>
-    <!-- 헤더 -->
-    <header class="header">
-      <!-- 다크모드 버튼 -->
-      <input type="checkbox" id="toggle" hidden />
-      <label for="toggle" class="toggleSwitch">
-        <span class="toggleButton"></span>
-      </label>
-      <!-- 제목 -->
-      <h2 class="title">No More Tomorrow Me🔥</h2>
-    </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Todo list</title>
+        <link rel="stylesheet" href="./css/style.css" />
+        <link rel="stylesheet" href="./css/darkMode.css" />
+    </head>
+    <body>
+        <header class="header">
+            <input type="checkbox" id="toggle" hidden />
+            <label for="toggle" class="toggleSwitch">
+                <span class="toggleButton"></span>
+            </label>
+            <h2 class="title">No More Tomorrow Me🔥</h2>
+        </header>
 
-    <main>
-      <!-- 백로그 -->
-      <section class="backLog">
-        <!-- 백로그 제목 -->
-        <div class="backlogFixedHeader">
-          <h3 class="sectionTitle">Back Log</h3>
-          <hr />
-        </div>
-
-        <!-- 백로그 검색 및 추가 -->
-        <div class="backlogHeader">
-          <!-- 백로그 검색창 -->
-          <input type="text" placeholder="Search tasks..." class="searchBar" />
-          <button class="searchButton">🔍︎</button>
-          <!-- 백로그 추가 -->
-          <button class="addTask">+</button>
-        </div>
-
-        <!-- 백로그 태스크 -->
-        <div class="backlogScrollArea">
-          <div class="taskContainer">
-            <!-- 메인 타이틀 태스크 -->
-            <div class="maintaskContainer">
-              <input type="text" class="taskContent" />
-              <!-- 중요도 선택지 -->
-              <div class="importanceDropdown">
-                <div class="selected">
-                  <span class="circle high"></span>
-                  <span class="label">상</span>
+        <main>
+            <!-- 백로그 -->
+            <section class="backLog">
+                <div class="backlogFixedHeader">
+                    <h3 class="sectionTitle">Back Log</h3>
+                    <hr />
                 </div>
-                <ul class="dropdownOptions hidden">
-                  <li data-value="1"><span class="circle high"></span> 상</li>
-                  <li data-value="2"><span class="circle medium"></span> 중</li>
-                  <li data-value="3"><span class="circle low"></span> 하</li>
-                </ul>
-              </div>
-              <!-- 편집 버튼 -->
-              <button class="edit">✎</button>
-              <!-- 삭제 버튼 -->
-              <button class="delete">🗑︎</button>
-              <!-- 종료일 선택 버튼 -->
-              <div class="finishDateContainer">
-                <input type="date" class="finishDateContent" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <!-- 현재로그 태스크 -->
-      <section class="current">
-        <!-- 현재로그 제목 -->
-        <div class="currentHeader">
-          <h3 class="sectionTitle">Current Tasks</h3>
-          <hr />
-        </div>
+                <!-- 백로그 검색 및 추가 -->
+                <div class="backlogHeader">
+                    <input type="text" placeholder="Search tasks..."
+                        class="searchBar" />
+                    <button class="searchButton">🔍︎</button>
+                    <button class="addTask">+</button>
+                </div>
+                <div class="backlogScrollArea">
 
-        <div class="currentScrollArea">
-          <div class="currentTaskWrapper">
-            <div class="currentTaskContainer">
-              <!-- 여기에 main task가 js로 들어올 예정 -->
-               <!-- 메인 태스크 예시 (js대체) -->
-              <div class="mainTaskEx">
-                <span class="mainTaskName">스터디 회의 준비</span>
-                <div class="taskDueDate">종료일: 2025-04-10</div>
-              </div>
-              <div class="taskButtons">
-                <button class="edit">✎</button>
-                <!-- 접기/펼치기 버튼 -->
-                <button class="toggleSubtask">▼</button>
-              </div>
-            </div>
+                </div>
+            </section>
 
-            <!-- 하위 태스크: 기본은 숨김 -->
-            <div class="subtaskContainer hidden">
-              <!-- 여기에 하위태스크 js 들어올 예정 -->
-               <!-- 하위 태스크 예시(js대체)-->
-              <div class="subtaskItem">
-                <input type="checkbox" class="subtaskCheck" />
-                <span class="subtaskText">하위 태스크 내용</span>
-                <button class="subtaskDelete">🗑︎</button>
-              </div>
-              <div class="subtaskItem">
-                <input type="checkbox" class="subtaskCheck" />
-                <span class="subtaskText">하위 태스크 내용2</span>
-                <button class="subtaskDelete">🗑︎</button>
-              </div>
-              <!-- 하위태스크 추가 -->
-              <button class="addSubtaskBtn">+</button>
-            </div>
-          </div>
-        </div>
-      </section>
+            <!-- 현재 태스크 -->
+            <section class="current">
+                <div class="currentHeader">
+                    <h3 class="sectionTitle">Current Tasks</h3>
+                    <hr />
+                </div>
+                <div class="currentScrollArea">
+                </div>
+            </section>
 
-      <!-- 완료된 태스크 -->
-      <section class="complete">
-        <!-- 완료된로그 제목 -->
-        <h3 class="sectionTitle">Completed Tasks</h3>
-        <hr />
+            <!-- 완료된 태스크 -->
+            <section class="complete">
+                <h3 class="sectionTitle">Completed Tasks</h3>
+                <hr />
 
-        <div class="completedTaskContainer">
-          <!-- JS에서 이 안에 완료된 task가 들어옴 -->
-          <!-- 완료 태스크 예시(js대체) -->
-          <div class="completedTaskItem">
-            <div class="completedTaskTitle">할 일 제목</div>
-            <div class="completedTaskDate">2025-04-07</div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </body>
+                <div class="completedTaskContainer">
+                    <!-- JS에서 이 안에 완료된 task가 들어옴 -->
+                    <!-- 예시 하나 넣어두면 이런 식 -->
+                    
+                </div>
+            </section>
+        </main>
+
+        <script src="./scripts/script.js" defer type="module"></script>
+    </body>
 </html>
