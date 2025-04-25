@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 전체 백로그 이벤트 초기화
 const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogContainer, editBtn, deleteBtn, dropdownOptions, selected, label, items }) => {
-  let state = { editing: false };
+  const state = { editing: false };
 
   document.addEventListener("click", (e) => {
     // 클릭한 대상이 backLogContainer 내부가 아닌 경우
@@ -58,6 +58,7 @@ const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, i
     items.title = e.target.value;
     saveToLocalStorage();
   });
+  //제목 엔티 눌렀을 떄
   backLogTaskContent.addEventListener("keydown", (e) => {
     e.key == "Enter" ? (e.target.disabled = true) : "";
     saveToLocalStorage();
