@@ -208,11 +208,10 @@ main {
 }
 
 .move-btn:hover {
-  transform: translateY(-50%) translateX(10px); /* 마우스를 올리면 우측으로 이동 */
-  right: 5px; /* 버튼을 오른쪽으로 밀기 */
-  opacity: 1; /* 투명도 변화 */
+    transform: translateY(-50%) translateX(10px); /* 마우스를 올리면 우측으로 이동 */
+    right: 5px; /* 버튼을 오른쪽으로 밀기 */
+    opacity: 1; /* 투명도 변화 */
 }
-
 
 /* 메인 태스크 박스 */
 .maintaskContainer {
