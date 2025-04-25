@@ -117,13 +117,328 @@
      highlightUrgentTasks();
    };
    ```
-</details>
-   
+   </details>
+   <br>
 
    
+   <details>
+   <summary>백로그 정렬 및 CRUD</summary>
+      
+   ```javascript
+   const sortTodos = (keyword = "") => {
+     const filtered = todos.filter((todo) => !todo.complete && (keyword ? todo.title.includes(keyword) : true));
+     filtered.sort((a, b) => {
+       // 날짜가 없는지 여부 확인 (빈 문자열 혹은 falsy 값인 경우)
+       const noDateA = !a.date || a.date === "";
+       const noDateB = !b.date || b.date === "";
+   
+       // 한쪽만 날짜가 없으면, 날짜가 없는 항목이 앞에 오도록 함
+       if (noDateA && !noDateB) {
+         return -1; // a가 b보다 앞에 오도록 함
+       } else if (!noDateA && noDateB) {
+         return 1; // b가 a보다 앞에 오도록 함
+       } else {
+         // 둘 다 날짜가 있는 경우: 날짜를 비교하여 정렬
+         const dateA = new Date(a.date);
+         const dateB = new Date(b.date);
+   
+         if (dateA.getTime() === dateB.getTime()) {
+           // 날짜가 같으면 importance 값을 비교
+           return a.importance - b.importance;
+         } else {
+           // 날짜를 기준으로 정렬
+           return dateA - dateB;
+         }
+       }
+     });
+   
+     backLogList.innerHTML = "";
+     filtered.forEach((todo) => {
+       const { backLogContainer } = addBackLogElement(todo);
+       backLogList.appendChild(backLogContainer);
+     });
+     saveToLocalStorage();
+     highlightUrgentTasks();
+   };
 
-   - 백로그 CRUD 함수
-   - 체크리스트 본문
+   // 백로그 이벤트 - 검색 기능 이벤트
+   const searchBtnEvent = () => {
+     const keyword = document.querySelector(".searchBar");
+     keyword.addEventListener("keydown", (e) => {
+       const word = keyword.value.trim();
+       if (e.key == "Enter") {
+         sortTodos(word);
+       }
+     });
+   };
+
+   const initBackLogButtons = () => {
+     const addTaskBtn = document.querySelector(".addTask");
+     const searchBtn = document.querySelector(".searchButton");
+   
+     addTaskBtn.addEventListener("click", () => {
+       createTask();
+       saveToLocalStorage();
+       console.log(todos);
+     });
+   
+     searchBtn.addEventListener("click", () => {
+       const keyword = document.querySelector(".searchBar").value.trim();
+       sortTodos(keyword);
+     });
+   };
+
+   // 백로그 이벤트 - edit 버튼 이벤트
+   const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, items }) => {
+     editBtn.addEventListener("click", () => {
+       backLogTaskContent.removeAttribute("disabled");
+       finishDateContent.removeAttribute("disabled");
+       backLogTaskContent.focus();
+       if (backLogTaskContent.value !== "" && finishDateContent.value !== "") state.editing = true;
+     });
+   
+     // 날짜를 변경 했을 시
+     finishDateContent.addEventListener("change", (e) => {
+       items.date = e.target.value;
+       state.date = true;
+     });
+   
+     // 제목을 입력 시
+     backLogTaskContent.addEventListener("input", (e) => {
+       items.title = e.target.value;
+     });
+     //제목 엔티 눌렀을 떄
+     backLogTaskContent.addEventListener("keydown", (e) => {
+       if (e.key == "Enter") {
+         if (state.editing) {
+           finishDateContent.disabled = true;
+           state.editing = false;
+           sortTodos();
+         }
+         e.target.disabled = true;
+         state.title = true;
+         saveToLocalStorage();
+       }
+     });
+   
+     backLogTaskContent.addEventListener("blur", () => {
+       if (!state.editing) {
+         backLogTaskContent.disabled = items.title === "" ? false : true;
+         state.title = true;
+       }
+       saveToLocalStorage();
+       window.dispatchEvent(new CustomEvent("updateChecklist"));
+     });
+   };
+
+   // 백로그 이벤트 - 삭제 버튼 이벤트
+   const deleteBtnEvent = ({ backLogContainer, deleteBtn, items }) => {
+     deleteBtn.addEventListener("click", (e) => {
+       backLogList.removeChild(backLogContainer);
+       todoDelete(items);
+       window.dispatchEvent(new CustomEvent("updateChecklist"));
+     });
+   };
+   ```
+   </details>
+
+   <br>
+   
+   <details>
+   <summary>체크리스트 본문 정렬 및 CRUD</summary>
+      
+   ```javascript
+   const checkListBody = () => {
+     checkList.innerHTML = "";
+     todos
+         .filter(todo => todo.moveCheck && !todo.complete)
+         .sort((a, b) => {
+               const dateA = new Date(a.date);
+               const dateB = new Date(b.date);
+               if (dateA < dateB) return -1;
+               if (dateA > dateB) return 1;
+               return a.importance - b.importance;
+             })
+         .forEach(todo => checkList.appendChild(addCheckListBodyElement(todo)));
+   };
+   
+   // 수정 완료시 적용
+   const finishEdit = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo }) => {
+     if (!isEditing) return;
+   
+     titleSpan.innerText = titleInput.value;
+     dateSpan.innerText = dateInput.value;
+   
+     titleInput.style.display = "none";
+     dateInput.style.display = "none";
+     titleSpan.style.display = "inline";
+     dateSpan.style.display = "inline";
+   
+     todo.title = titleInput.value;
+     todo.date = dateInput.value;
+     window.dispatchEvent(new CustomEvent("updateBackLog"));
+     saveToLocalStorage();
+   };
+   
+      export const modBtnEvent = ({ titleSpan, titleInput, dateSpan, dateInput, modBtnEl, todo }) => {
+     let isEditing = false;
+     modBtnEl.addEventListener("click", (e) => {
+       e.stopPropagation();
+       isEditing = true;
+   
+       titleInput.style.display = "inline";
+       dateInput.style.display = "inline";
+       titleSpan.style.display = "none";
+       dateSpan.style.display = "none";
+   
+       titleInput.style = "display: inline; padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; width: 90%; margin-bottom: 6px;";
+       dateInput.style = "display: inline; padding: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;";
+   
+       titleInput.focus();
+       saveEvent({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+     });
+   };
+   
+   // 체크리스트 본문 - 추가(+) 버튼 이벤트
+   export const addBtnEvent = ({ addBtnEl, todo, wrapper }) => {
+     addBtnEl.addEventListener("click", (e) => {
+       const container = wrapper.querySelector(".subtaskContainer");
+       initSubtaskAddButtons(todo.id, container, addBtnEl);
+     });
+   };
+   
+   // 체크리스트 본문 - save 이벤트
+   const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo }) => {
+     // 외부 클릭 시 저장
+     const clickHandler = (e) => {
+       if (isEditing && ![titleInput, dateInput].includes(e.target)) {
+         finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+         document.removeEventListener("click", clickHandler);
+       }
+     };
+   
+     document.addEventListener("click", clickHandler);
+   
+     // 엔터 키 클릭 시 저장
+     titleInput.addEventListener("keydown", (e) => {
+       if (e.key === "Enter") {
+         finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+         document.removeEventListener("click", clickHandler);
+       }
+     });
+   
+     dateInput.addEventListener("keydown", (e) => {
+       if (e.key === "Enter") {
+         finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+         document.removeEventListener("click", clickHandler);
+       }
+     });
+   };
+   
+   //하위 태스크 이벤트
+   // 삭제 버튼 이벤트
+   const deleteEvent = ({ div, backlogId, subTask, delBtn }) => {
+     delBtn.addEventListener("click", () => {
+       const backlog = todos.find((item) => item.id === backlogId);
+       if (!backlog) return;
+   
+       backlog.list = backlog.list.filter((item) => item.id !== subTask.id);
+       saveToLocalStorage();
+       div.remove();
+     });
+   };
+   
+   // 입력 확인 이벤트
+   const inputConfirmEvent = ({ div, backlogId, subTask, checkbox, delBtn, input }) => {
+     let isConfirmed = false;
+   
+     const confirm = () => {
+       if (isConfirmed) return;
+       isConfirmed = true;
+       const value = input.value.trim();
+   
+       if (!value) {
+         const backlog = todos.find((item) => item.id === backlogId);
+         if (backlog) {
+           backlog.list = backlog.list.filter((item) => item.id !== subTask.id);
+           saveToLocalStorage();
+         }
+         div.remove();
+         return;
+       }
+   
+       subTask.text = value;
+   
+       const span = document.createElement("span");
+       span.className = "subtaskText";
+       span.textContent = subTask.text;
+   
+       if (subTask.check) {
+         span.style.textDecoration = "line-through";
+         span.style.opacity = "0.6";
+       }
+   
+       input.replaceWith(span);
+       initSubTaskEvents({ div, backlogId, subTask, textEl: span, checkbox, delBtn, input: null });
+       saveToLocalStorage();
+     };
+   
+     input.addEventListener("keydown", (e) => e.key === "Enter" && confirm());
+     input.addEventListener("blur", confirm);
+   };
+
+   // 하위 태스크 요소 생성
+   const createSubTaskElement = (backlogId, subTask, editable = false) => {
+     const div = addEl("div", "subtaskItem");
+     div.setAttribute("data-sub-id", subTask.id);
+   
+     const checkbox = addEl("input", "subtaskCheck", "", "", "checkbox");
+     checkbox.checked = !!subTask.check;
+   
+     let textSpan = null;
+     let input = null;
+   
+     if (editable) {
+       const style = "width: 100%; text-align: center; border: none; outline: none; background: transparent;";
+       input = addEl("input", "subtaskText", "", "", "text", style);
+       input.value = subTask.text || "";
+     } else {
+       textSpan = addEl("span", "subtaskText", subTask.text);
+       if (subTask.check) {
+         textSpan.style.textDecoration = "line-through";
+         textSpan.style.opacity = "0.6";
+       }
+     }
+   
+     const delBtn = addEl("button", "subtaskDelete", "🗑︎");
+   
+     if (editable) {
+       div.append(checkbox, input, delBtn);
+     } else {
+       div.append(checkbox, textSpan, delBtn);
+     }
+   
+     initSubTaskEvents({ div, backlogId, subTask, textSpan, checkbox, delBtn, input });
+     return div;
+   };
+   
+   // 버튼 이벤트 연결
+   const initSubtaskAddButtons = (backlogId, container, addBtn) => {
+     const backlog = todos.find((b) => b.id === backlogId);
+     if (!backlog) return;
+   
+     const newId = Date.now();
+     const newTask = { id: newId, text: "", check: false };
+     backlog.list.push(newTask);
+   
+     const div = createSubTaskElement(backlogId, newTask, true);
+     container.insertBefore(div, addBtn);
+   
+     const input = div.querySelector('input[type="text"]');
+     if (input) input.focus();
+   };
+   ```
+   </details>
      
    - 완료 태스크
      
