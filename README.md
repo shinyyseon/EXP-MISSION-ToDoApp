@@ -92,7 +92,9 @@
                  - ```initCompletedTaskEvents()``` : 완료된 태스크 삭제 이벤트
 
 ---
-   - <details> <summary>로컬 스토리지 사용</summary>
+   <details> 
+   <summary>로컬 스토리지 사용</summary>
+      
    ```javascript
    // localStorage에 List 저장
    const saveToLocalStorage = () => {
@@ -114,47 +116,11 @@
      sortTodos();
      highlightUrgentTasks();
    };
-   ```
-   </details>
+   </details> ```
+```
+   
 
-   - 백로그 정렬 함수
-   ```javascript
-   const sortTodos = (keyword = "") => {
-     const filtered = todos.filter((todo) => !todo.complete && (keyword ? todo.title.includes(keyword) : true));
-     filtered.sort((a, b) => {
-       // 날짜가 없는지 여부 확인 (빈 문자열 혹은 falsy 값인 경우)
-       const noDateA = !a.date || a.date === "";
-       const noDateB = !b.date || b.date === "";
    
-       // 한쪽만 날짜가 없으면, 날짜가 없는 항목이 앞에 오도록 함
-       if (noDateA && !noDateB) {
-         return -1; // a가 b보다 앞에 오도록 함
-       } else if (!noDateA && noDateB) {
-         return 1; // b가 a보다 앞에 오도록 함
-       } else {
-         // 둘 다 날짜가 있는 경우: 날짜를 비교하여 정렬
-         const dateA = new Date(a.date);
-         const dateB = new Date(b.date);
-   
-         if (dateA.getTime() === dateB.getTime()) {
-           // 날짜가 같으면 importance 값을 비교
-           return a.importance - b.importance;
-         } else {
-           // 날짜를 기준으로 정렬
-           return dateA - dateB;
-         }
-       }
-     });
-   
-     backLogList.innerHTML = "";
-     filtered.forEach((todo) => {
-       const { backLogContainer } = addBackLogElement(todo);
-       backLogList.appendChild(backLogContainer);
-     });
-     saveToLocalStorage();
-     highlightUrgentTasks();
-   };
-   ```
 
    - 백로그 CRUD 함수
    - 체크리스트 본문
