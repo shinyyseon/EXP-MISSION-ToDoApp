@@ -105,6 +105,7 @@ const selectedEvent = ({ state, selected, dropdownOptions, label, items }) => {
       if (!state.editing) {
         sortTodos();
         checkListBody();
+        renderInitialSubTasks();
       }
     });
   });
@@ -259,6 +260,9 @@ const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo
   const clickHandler = (e) => {
     if (isEditing && ![titleInput, dateInput].includes(e.target)) {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      checkListBody();
+      renderInitialSubTasks();
+      sortTodos();
       document.removeEventListener("click", clickHandler);
     }
   };
@@ -269,6 +273,9 @@ const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo
   titleInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      checkListBody();
+      renderInitialSubTasks();
+      sortTodos();
       document.removeEventListener("click", clickHandler);
     }
   });
@@ -276,6 +283,9 @@ const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo
   dateInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      checkListBody();
+      renderInitialSubTasks();
+      sortTodos();
       document.removeEventListener("click", clickHandler);
     }
   });
@@ -372,7 +382,7 @@ const completedTaskrestore = ({ restoreEl, backlogId }) => {
 
     saveToLocalStorage();
     window.dispatchEvent(new CustomEvent("updateChecklist"));
-    window.dispatchEvent(new CustomEvent("updateBackLog"));
+    sortTodos();
     renderInitialSubTasks();
   });
 };
@@ -383,16 +393,12 @@ const initCompletedTaskEvents = ({ item, delBtn }) => {
     todoDelete(item);
     renderCompletedTasks(todos);
   });
-  window.dispatchEvent(new CustomEvent("updateBackLog"));
+  sortTodos();
 };
 
 window.addEventListener("updateChecklist", () => {
   checkListBody();
   renderCompletedTasks(todos);
-});
-
-window.addEventListener("updateBackLog", () => {
-  sortTodos();
 });
 
 export { initSubTaskEvents, completedTaskrestore, initCompletedTaskEvents };
