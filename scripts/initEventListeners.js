@@ -17,22 +17,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 전체 백로그 이벤트 초기화
 const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogContainer, editBtn, deleteBtn, dropdownOptions, selected, label, items }) => {
-  const state = { editing: false };
+  const state = { editing: false, title: false, date: false };
 
   document.addEventListener("click", (e) => {
-    // 클릭한 대상이 backLogContainer 내부가 아닌 경우
-    if (state.editing && !backLogContainer.contains(e.target)) {
-      // finishDateContent와 backLogTaskContent를 disabled로 설정
+    if ((state.editing && !backLogContainer.contains(e.target)) || (state.title && state.date)) {
       finishDateContent.disabled = true;
       backLogTaskContent.disabled = true;
       state.editing = false;
+      state.title = false;
+      state.date = false;
+      sortTodos();
       renderInitialSubTasks();
     }
   });
 
   editBtnEvent({ state, finishDateContent, backLogTaskContent, editBtn, items });
   deleteBtnEvent({ backLogContainer, deleteBtn, items });
-  selectedEvent({ selected, dropdownOptions, label, items });
+  selectedEvent({ state, selected, dropdownOptions, label, items });
   arrowEvent({ backLogContainer, items });
   searchBtnEvent();
 };
@@ -43,14 +44,15 @@ const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, i
     backLogTaskContent.removeAttribute("disabled");
     finishDateContent.removeAttribute("disabled");
     backLogTaskContent.focus();
-    state.editing = true;
+    if (backLogTaskContent.value !== "" && finishDateContent.value !== "") state.editing = true;
   });
 
   // 날짜를 변경 했을 시
   finishDateContent.addEventListener("change", (e) => {
     items.date = e.target.value;
+    state.date = true;
     window.dispatchEvent(new CustomEvent("updateChecklist"));
-    sortTodos();
+    // sortTodos();
   });
 
   // 제목을 입력 시
@@ -63,8 +65,10 @@ const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, i
       if (state.editing) {
         finishDateContent.disabled = true;
         state.editing = false;
+        sortTodos();
       }
       e.target.disabled = true;
+      state.title = true;
       saveToLocalStorage();
     }
   });
@@ -72,6 +76,7 @@ const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, i
   backLogTaskContent.addEventListener("blur", () => {
     if (!state.editing) {
       backLogTaskContent.disabled = items.title === "" ? false : true;
+      state.title = true;
     }
     saveToLocalStorage();
     window.dispatchEvent(new CustomEvent("updateChecklist"));
@@ -88,7 +93,7 @@ const deleteBtnEvent = ({ backLogContainer, deleteBtn, items }) => {
 };
 
 // 백로그 이벤트 - 중요도 변경 이벤트
-const selectedEvent = ({ selected, dropdownOptions, label, items }) => {
+const selectedEvent = ({ state, selected, dropdownOptions, label, items }) => {
   // dropDownElement ( ul ) 안에 있는 li 를 가져온다
   const importanceList = dropdownOptions.querySelectorAll("li");
   importanceList.forEach((li, index) => {
@@ -98,7 +103,9 @@ const selectedEvent = ({ selected, dropdownOptions, label, items }) => {
       items.importance = index + 1;
       // 중요도 1, 2, 3 에 대해 그때에 해당하는 스타일을 보여주는 삼항 연산자
       items.importance === 1 ? (label.innerText = "상") : items.importance === 2 ? (label.innerText = "중") : (label.innerText = "하");
-      sortTodos();
+      if (!state.editing) {
+        sortTodos();
+      }
     });
   });
 
