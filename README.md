@@ -116,8 +116,7 @@
      sortTodos();
      highlightUrgentTasks();
    };
-   </details> ```
-```
+   ```
    
 
    
