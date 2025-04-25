@@ -16,7 +16,6 @@ export const renderSubTaskWrapper = (backlogId, container) => {
   clearSubTaskEl(container);
 
   const backlog = findBacklogId(backlogId);
-  console.log(backlog);
   if (!backlog) return;
 
   backlog.list.forEach((subTask) => {

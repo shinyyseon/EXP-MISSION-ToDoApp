@@ -140,7 +140,6 @@ const arrowEvent = ({ backLogContainer, items }) => {
     // ">>>", "<<<" 버튼 클릭 시
     moveBtn.addEventListener("click", () => {
       items.moveCheck = !items.moveCheck;
-      console.log("moveCheck:", items.moveCheck);
       window.dispatchEvent(new CustomEvent("updateChecklist"));
       saveToLocalStorage();
       renderInitialSubTasks();
@@ -178,7 +177,6 @@ const initBackLogButtons = () => {
   addTaskBtn.addEventListener("click", () => {
     createTask();
     saveToLocalStorage();
-    console.log(todos);
   });
 
   searchBtn.addEventListener("click", () => {

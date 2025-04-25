@@ -14,7 +14,6 @@ const saveToLocalStorage = () => {
 // 리로드 했을 시 localStorage에 todoList 가 있다면 불러와서 JSON 형태로 만든 후 todos 에 초기화
 const loadLocalStorage = () => {
   const data = localStorage.getItem("todoList");
-  console.log(JSON.parse(data));
   if (data) {
     todos = JSON.parse(data);
   }
