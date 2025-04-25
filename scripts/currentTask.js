@@ -9,6 +9,13 @@ const checkListBody = () => {
   checkList.innerHTML = "";
   todos
       .filter(todo => todo.moveCheck && !todo.complete)
+      .sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            if (dateA < dateB) return -1;
+            if (dateA > dateB) return 1;
+            return a.importance - b.importance;
+          })
       .forEach(todo => checkList.appendChild(addCheckListBodyElement(todo)));
 };
 

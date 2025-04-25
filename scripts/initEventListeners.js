@@ -27,6 +27,7 @@ const initBackLogEvents = ({ finishDateContent, backLogTaskContent, backLogConta
       state.title = false;
       state.date = false;
       sortTodos();
+      window.dispatchEvent(new CustomEvent("updateChecklist"));
       renderInitialSubTasks();
     }
   });
@@ -51,8 +52,6 @@ const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, i
   finishDateContent.addEventListener("change", (e) => {
     items.date = e.target.value;
     state.date = true;
-    window.dispatchEvent(new CustomEvent("updateChecklist"));
-    // sortTodos();
   });
 
   // 제목을 입력 시
@@ -105,6 +104,7 @@ const selectedEvent = ({ state, selected, dropdownOptions, label, items }) => {
       items.importance === 1 ? (label.innerText = "상") : items.importance === 2 ? (label.innerText = "중") : (label.innerText = "하");
       if (!state.editing) {
         sortTodos();
+        checkListBody();
       }
     });
   });
