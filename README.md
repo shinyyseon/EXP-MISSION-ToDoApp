@@ -92,7 +92,6 @@
                  - ```initCompletedTaskEvents()``` : 완료된 태스크 삭제 이벤트
 
 ---
-   <details> 
    <summary>로컬 스토리지 사용</summary>
       
    ```javascript
@@ -117,7 +116,6 @@
      highlightUrgentTasks();
    };
    ```
-   <details>
    
 
    
