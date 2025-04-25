@@ -60,13 +60,19 @@ const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, i
   //제목 엔티 눌렀을 떄
   backLogTaskContent.addEventListener("keydown", (e) => {
     if (e.key == "Enter") {
+      if (state.editing) {
+        finishDateContent.disabled = true;
+        state.editing = false;
+      }
       e.target.disabled = true;
       saveToLocalStorage();
     }
   });
 
   backLogTaskContent.addEventListener("blur", () => {
-    backLogTaskContent.disabled = items.title === "" ? false : true;
+    if (!state.editing) {
+      backLogTaskContent.disabled = items.title === "" ? false : true;
+    }
     saveToLocalStorage();
     window.dispatchEvent(new CustomEvent("updateChecklist"));
   });
