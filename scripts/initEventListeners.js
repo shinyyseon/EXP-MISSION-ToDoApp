@@ -56,16 +56,18 @@ const editBtnEvent = ({ state, finishDateContent, backLogTaskContent, editBtn, i
   // 제목을 입력 시
   backLogTaskContent.addEventListener("input", (e) => {
     items.title = e.target.value;
-    saveToLocalStorage();
   });
   //제목 엔티 눌렀을 떄
   backLogTaskContent.addEventListener("keydown", (e) => {
-    e.key == "Enter" ? (e.target.disabled = true) : "";
-    saveToLocalStorage();
+    if (e.key == "Enter") {
+      e.target.disabled = true;
+      saveToLocalStorage();
+    }
   });
 
   backLogTaskContent.addEventListener("blur", () => {
     backLogTaskContent.disabled = items.title === "" ? false : true;
+    saveToLocalStorage();
     window.dispatchEvent(new CustomEvent("updateChecklist"));
   });
 };
