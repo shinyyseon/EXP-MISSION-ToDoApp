@@ -72,7 +72,6 @@ const finishEdit = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, tod
 
   todo.title = titleInput.value;
   todo.date = dateInput.value;
-  window.dispatchEvent(new CustomEvent("updateBackLog"));
   saveToLocalStorage();
 };
 

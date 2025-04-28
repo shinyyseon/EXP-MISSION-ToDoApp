@@ -105,6 +105,7 @@ const selectedEvent = ({ state, selected, dropdownOptions, label, items }) => {
       if (!state.editing) {
         sortTodos();
         checkListBody();
+        renderInitialSubTasks();
       }
     });
   });
@@ -130,16 +131,18 @@ const arrowEvent = ({ backLogContainer, items }) => {
     // 완료된 항목이면 버튼 생성 안 함
     if (items.complete) return;
 
-    // ">>>", "<<<" 버튼 생성
-    const isMoved = items.moveCheck;
-    const btnText = isMoved ? "<<<" : ">>>";
-    const moveBtn = addEl("button", "move-btn", items.moveCheck ? "<<<" : ">>>");
-    if (items.moveCheck) moveBtn.classList.add("reverse"); // <<<일 때 클래스 추가
+    // 반응형 화면 사이즈
+    const smallScreen = window.innerWidth <= 768;
 
-    // ">>>", "<<<" 버튼 클릭 시
+    // 화살표 결정
+    const btnText = smallScreen ? (items.moveCheck ? "⭡" : "⭣") : (items.moveCheck ? "⭠" : "⭢");
+    const moveBtn = addEl("button", "move-btn", btnText);
+
+    // 방향 버튼 클릭 시
     moveBtn.addEventListener("click", () => {
       items.moveCheck = !items.moveCheck;
-      console.log("moveCheck:", items.moveCheck);
+      const smallScreen = window.innerWidth <= 768;
+      moveBtn.textContent = smallScreen ? (items.moveCheck ? "⭡" : "⭣") : (items.moveCheck ? "⭠" : "⭢");
       window.dispatchEvent(new CustomEvent("updateChecklist"));
       saveToLocalStorage();
       renderInitialSubTasks();
@@ -177,7 +180,6 @@ const initBackLogButtons = () => {
   addTaskBtn.addEventListener("click", () => {
     createTask();
     saveToLocalStorage();
-    console.log(todos);
   });
 
   searchBtn.addEventListener("click", () => {
@@ -259,6 +261,9 @@ const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo
   const clickHandler = (e) => {
     if (isEditing && ![titleInput, dateInput].includes(e.target)) {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      checkListBody();
+      renderInitialSubTasks();
+      sortTodos();
       document.removeEventListener("click", clickHandler);
     }
   };
@@ -269,6 +274,9 @@ const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo
   titleInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      checkListBody();
+      renderInitialSubTasks();
+      sortTodos();
       document.removeEventListener("click", clickHandler);
     }
   });
@@ -276,6 +284,9 @@ const saveEvent = ({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo
   dateInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       finishEdit({ isEditing, titleSpan, titleInput, dateSpan, dateInput, todo });
+      checkListBody();
+      renderInitialSubTasks();
+      sortTodos();
       document.removeEventListener("click", clickHandler);
     }
   });
@@ -372,7 +383,7 @@ const completedTaskrestore = ({ restoreEl, backlogId }) => {
 
     saveToLocalStorage();
     window.dispatchEvent(new CustomEvent("updateChecklist"));
-    window.dispatchEvent(new CustomEvent("updateBackLog"));
+    sortTodos();
     renderInitialSubTasks();
   });
 };
@@ -383,16 +394,12 @@ const initCompletedTaskEvents = ({ item, delBtn }) => {
     todoDelete(item);
     renderCompletedTasks(todos);
   });
-  window.dispatchEvent(new CustomEvent("updateBackLog"));
+  sortTodos();
 };
 
 window.addEventListener("updateChecklist", () => {
   checkListBody();
   renderCompletedTasks(todos);
-});
-
-window.addEventListener("updateBackLog", () => {
-  sortTodos();
 });
 
 export { initSubTaskEvents, completedTaskrestore, initCompletedTaskEvents };
